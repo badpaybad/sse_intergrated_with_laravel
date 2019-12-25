@@ -1,6 +1,9 @@
 # sse_intergrated_with_laravel
 Pull code then all code sample in side folder sse_simple
 
+### You have to know about Laravel framework 
+### You have to use Redis server
+
 # check php server side code 
 \sse_simple\app\Http\Controllers\SampleController.php
 
