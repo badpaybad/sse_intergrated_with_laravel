@@ -7,7 +7,7 @@ Pull code then all code sample in side folder sse_simple
 
 ### You have to use Redis server
 - https://redis.io/
-- Redis on window https://github.com/microsoftarchive/redis/releases
+- Redis on window https://github.com/microsoftarchive/redis/releases or use linux subsystem on window to run
 
 # check php server side code 
 \sse_simple\app\Http\Controllers\SampleController.php
