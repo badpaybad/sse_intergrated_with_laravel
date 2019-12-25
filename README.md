@@ -27,4 +27,5 @@ you can check code and remove for your case. function name GetThenRemoveSubscrib
 # last check this git for more sse with old version of Laravel
 For old version Laravel because I use Dotenv\Parser; to parse file .env 
 https://github.com/badpaybad/php_laravel_sse
+- there are some line code changed in EventListenerHelper.php
 
