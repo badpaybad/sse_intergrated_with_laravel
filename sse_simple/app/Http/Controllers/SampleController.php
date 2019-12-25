@@ -21,7 +21,7 @@ class SampleController extends Controller
         $channelName = $request["c"];
         $msg = $request["msg"];
         $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
-        $this->sse->SendToChannel($channelName, json_encode(array("c" => $channelName, "data" => "Your datas", "msg"=>$msg)));
+        $this->sse->SendToChannel($channelName, json_encode(array("channel" => $channelName, "datetime" => date('c'), "msg"=>$msg)));
         return json_encode(array("sucess"=>1));
 
     }
