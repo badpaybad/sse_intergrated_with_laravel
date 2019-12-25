@@ -33,8 +33,8 @@
         });
     </script>
     <script>
-        var channelName = 'test';
-        var subscriberName = 'test'
+        var channelName = 'test'; //you channel to listener 
+        var subscriberName = 'test';//should be the same to channelName and 1st character should not begin with number.
         const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?c=' + channelName + '&s=' + subscriberName;
 
         var myWorker = new SharedWorker(swUrl);
@@ -49,6 +49,7 @@
         myWorker.port.start();
 
         function sendMsg() {
+            //call to server side to post msg to other
             var url = '/sendMsg';
             jQuery.post(url, {
                 csrf: '{{ csrf_token() }}',
