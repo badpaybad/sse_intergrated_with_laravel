@@ -1,17 +1,17 @@
 PushServer = {
     __subscribers: [],
     __handlers: [],
-    __currentEs:null,
-    __mainChannel:[],
-    init: function() {
+    __currentEs: null,
+    __mainChannel: [],
+    init: function () {
         PushServer.__handlers = [];
         PushServer.__subscribers = [];
     },
-    addHandler: function(handleNotification, mainChannel, subscriberName) {
+    addHandler: function (handleNotification, mainChannel, subscriberName) {
 
         var channelKey = mainChannel + "_" + subscriberName;
 
-        PushServer.__mainChannel[mainChannel]=mainChannel;
+        PushServer.__mainChannel[mainChannel] = mainChannel;
 
         PushServer.__subscribers[channelKey] = channelKey;
 
@@ -19,34 +19,34 @@ PushServer = {
 
         console.log("Subscribe: " + channelKey);
 
-        PushServer.listenChannel(channelKey, function(msg) {
+        PushServer.listenChannel(channelKey, function (msg) {
             // handleNotification(msg);
             PushServer.__handlers[channelKey](msg);
         });
 
     },
 
-    removeHandler: function(subscriberName) {
+    removeHandler: function (subscriberName) {
 
-        PushServer.__subscribers = PushServer.__subscribers.filter(function(item, k) {
+        PushServer.__subscribers = PushServer.__subscribers.filter(function (item, k) {
             return k !== subscriberName
         });
-        PushServer.__handlers = PushServer.__subscribers.filter(function(item, k) {
+        PushServer.__handlers = PushServer.__subscribers.filter(function (item, k) {
             return k !== subscriberName
-        });        
+        });
     },
 
-    listenChannel: function(channel, onMessageReceived, onConnected, onOpen) {
+    listenChannel: function (channel, onMessageReceived, onConnected, onOpen) {
         PushServer.__currentEs = new EventSource('/eventlistener.php?c=' + encodeURIComponent(channel)
-        +'&token='+encodeURIComponent('<?php echo Auth::getSession()->getId()?>'));
-        PushServer.__currentEs.onopen = function(evt) {
+            + '&token=' + encodeURIComponent('<?php echo Auth::getSession()->getId()?>'));
+        PushServer.__currentEs.onopen = function (evt) {
             if (onOpen) onOpen(evt);
         };
-        PushServer.__currentEs.onconnected = function(evt) {
+        PushServer.__currentEs.onconnected = function (evt) {
             if (onConnected) onConnected(evt);
             // console.log('connected');
         };
-        PushServer.__currentEs.onmessage = function(evt) {
+        PushServer.__currentEs.onmessage = function (evt) {
 
             onMessageReceived(evt.data);
 
@@ -57,7 +57,7 @@ PushServer = {
             // }
             //console.log('onmessage');
         };
-        PushServer.__currentEs.onerror = function(evt) {
+        PushServer.__currentEs.onerror = function (evt) {
             if (evt.currentTarget.readyState == 2 || PushServer.__currentEs.readyState == 2) {
                 PushServer.listenChannel(channel, onMessageReceived, onConnected, onOpen);
                 console.log('reconnected');
