@@ -16,7 +16,7 @@ Pull code then all code sample in side folder sse_simple
 \sse_simple\resources\views\index.blade.php
 
 ### in js value of channelName should be the same to subscriberName and should not begin with number.
-you can check code and remove for your case. functiSSon name GetThenRemoveSubscriberExpired
+you can check code and remove for your case. function name GetThenRemoveSubscriberExpired
 
 ### SSE 
 \sse_simple\public\js\webpushnotification\eventsourcereceiver.js
