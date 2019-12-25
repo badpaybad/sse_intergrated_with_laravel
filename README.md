@@ -2,7 +2,12 @@
 Pull code then all code sample in side folder sse_simple
 
 ### You have to know about Laravel framework 
+
+- Laravel 6.x https://laravel.com/docs/6.x
+
 ### You have to use Redis server
+- https://redis.io/
+- Redis on window https://github.com/microsoftarchive/redis/releases
 
 # check php server side code 
 \sse_simple\app\Http\Controllers\SampleController.php
