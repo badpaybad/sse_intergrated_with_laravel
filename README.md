@@ -12,6 +12,12 @@ Pull code then all code sample in side folder sse_simple
 # check php server side code 
 \sse_simple\app\Http\Controllers\SampleController.php
 
+### folder public for laravel 
+\sse_simple\public\eventlistener.php 
+- as an enpoint url for js EventSource connect 
+- run standalone 
+- not under request life cycle of Laravel
+
 # check javascript usage SharedWorker
 \sse_simple\resources\views\index.blade.php
 
