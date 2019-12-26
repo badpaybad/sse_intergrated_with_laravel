@@ -3,7 +3,9 @@ PushServer = {
     __handlers: [],
     __currentEs: null,
     __mainChannel: [],
-    init: function () {
+    __token: null,
+    init: function (token) {
+        PushServer.__token = token;
         PushServer.__handlers = [];
         PushServer.__subscribers = [];
     },
@@ -38,7 +40,7 @@ PushServer = {
 
     listenChannel: function (channel, onMessageReceived, onConnected, onOpen) {
         PushServer.__currentEs = new EventSource('/eventlistener.php?c=' + encodeURIComponent(channel)
-            + '&token=' + encodeURIComponent('<?php echo Auth::getSession()->getId()?>'));
+            + '&token=' + encodeURIComponent(PushServer.__token));
         PushServer.__currentEs.onopen = function (evt) {
             if (onOpen) onOpen(evt);
         };

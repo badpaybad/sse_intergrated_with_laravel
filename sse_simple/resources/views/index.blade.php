@@ -35,7 +35,8 @@
     <script>
         var channelName = 'test'; //you channel to listener 
         var subscriberName = 'test';//should be the same to channelName and 1st character should not begin with number.
-        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?c=' + channelName + '&s=' + subscriberName;
+        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?c=' + channelName + '&s=' + subscriberName
+        +'&token='+encodeURIComponent('<?php echo \Auth::getSession()->getId()?>');
 
         var myWorker = new SharedWorker(swUrl);
         myWorker.port.onmessage = function(e) {
