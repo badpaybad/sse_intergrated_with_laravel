@@ -12,7 +12,7 @@ Pull code then all code sample in side folder sse_simple
 # check php server side code 
 \sse_simple\app\Http\Controllers\SampleController.php
 
-### folder public for laravel 
+### folder public in laravel 
 \sse_simple\public\eventlistener.php 
 - as an enpoint url for js EventSource connect 
 - run standalone 
