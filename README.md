@@ -1,4 +1,4 @@
-# sse_intergrated_with_laravel
+# server send event _intergrated_with_laravel
 Pull code then all code sample in side folder sse_simple
 - Diagram to show how it work
 https://docs.google.com/drawings/d/1DvaYDm2OtOsw7py2K1JDAOB4aKPhH5lan_KnT8_L7MY/edit
