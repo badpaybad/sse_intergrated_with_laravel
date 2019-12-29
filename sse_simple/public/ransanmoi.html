@@ -42,6 +42,9 @@
                     ctx.fillRect(snake[i].x * unit, snake[i].y * unit, unit - 2, unit - 2);
                     if (snake[i].x == head_x && snake[i].y == head_y && snake_length > 1) {
                         clearInterval(intervalGame);
+                        ctx.font="30px Arial";
+                        ctx.fillStyle="blue";
+                        ctx.fillText("Failed", 10, 50);
                     }
                 }
 
