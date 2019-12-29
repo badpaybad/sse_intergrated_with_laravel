@@ -1,0 +1,85 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <canvas id='myCanvas' width="400" height="400">
+
+        <script>
+            var canv = document.getElementById("myCanvas");
+            var ctx = canv.getContext("2d");
+            var snake = [];
+            var head_x = 0; var head_y = 0;
+            var snake_length = 1;
+            var denta_x = 0; var denta_y = 0;
+            var width = 20;
+            var unit = 20;
+            var food_x = 15; var food_y = 15;
+
+            document.addEventListener("keydown", button_handle);
+
+            var intervalGame = setInterval(() => {
+                game();
+            }, 100);
+
+            var game = function () {
+                head_x = head_x + denta_x;
+                head_y = head_y + denta_y;
+                if (head_x < 0) head_x = width - 1;
+                if (head_y < 0) head_y = width - 1;
+                if (head_x > width - 1) head_x = 0;
+                if (head_y > width - 1) head_y = 0;
+
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, canv.width, canv.height)
+                while (snake.length > snake_length) {
+                    snake.shift();
+                }
+                for (var i = 0; i < snake.length; i++) {
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(snake[i].x * unit, snake[i].y * unit, unit - 2, unit - 2);
+                    if (snake[i].x == head_x && snake[i].y == head_y && snake_length > 1) {
+                        clearInterval(intervalGame);
+                    }
+                }
+
+                snake.push({ x: head_x, y: head_y });
+
+                if (head_x == food_x && head_y == food_y) {
+                    snake_length++;
+                    food_x = Math.floor(Math.random() * width);
+                    food_y = Math.floor(Math.random() * width);
+                }
+                ctx.fillStyle = "red";
+                ctx.fillRect(food_x * unit, food_y * unit, unit - 2, unit - 2);
+            }
+
+            function button_handle(key) {
+                switch (key.keyCode) {
+                    case 37:
+                        //trai
+                        denta_x = denta_x - 1; denta_y = 0
+
+                        break;
+                    case 38:
+                        //len   
+                        denta_x = 0; denta_y = - 1;
+
+                        break;
+                    case 39:
+                        //phai
+                        denta_x = 1; denta_y = 0;
+                        break;
+                    case 40:
+                        //xuong
+                        denta_x = 0; denta_y = 1;
+                        break;
+                }
+
+            }
+        </script>
+</body>
+
+</html>
