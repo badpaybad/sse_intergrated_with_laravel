@@ -52,6 +52,7 @@ class EventListenerHelperFireBase
     }
 
     private $database;
+    private $firebase;
     private $current_ref;
 
     public function __construct($google_service_account_json = "")
@@ -60,11 +61,11 @@ class EventListenerHelperFireBase
         if ($google_service_account_json == "") $google_service_account_json = __ROOT__ . '/google-service-account.json';
         $serviceAccount = ServiceAccount::fromJsonFile($google_service_account_json);
 
-        $firebase = (new Factory)
+        $this->firebase = (new Factory)
             ->withServiceAccount($serviceAccount)
             ->create();
 
-        $database = $firebase->getDatabase();
+        $this->database = $this->firebase->getDatabase();
     }
     public function SendToChannel($channel, $dataInStringJson)
     {
