@@ -1,0 +1,85 @@
+<html>
+
+<head></head>
+
+<body>
+    <button onclick="tryfind()">try</button>
+    <canvas id='myCanvas' width="400" height="400">
+
+        <script>
+            var canv = document.getElementById("myCanvas");
+            var ctx = canv.getContext("2d");
+            var unit = 20;
+
+            function Point(x, y, val) {
+                this.x = x;
+                this.y = y;
+                if (!val) val = 1;
+                this.val = val;
+
+                this.pointsAround = function () {
+                    return [
+                        new Point(x - 1, y),
+                        new Point(x + 1, y),
+                        new Point(x, y - 1),
+                        new Point(x, y + 1),
+                        new Point(x - 1, y - 1),
+                        new Point(x - 1, y + 1),
+                        new Point(x + 1, y - 1),
+                        new Point(x + 1, y + 1)
+                    ];
+                }
+
+                this.equal = function (p) {
+                    return this.x == p.x && this.y == p.y;
+                }
+
+            }
+
+            var map = [];
+
+            for (var x = 0; x < 3; x++) {
+                for (var y = 0; y < 3; y++) {
+                    map.push(new Point(x, y));
+                }
+            }
+
+            function tryfind() {
+                var foundPaths = [];
+                var currentPath = [];
+
+                var start = new Point(0, 0);
+                var end = new Point(1, 2);
+
+                var found = false;
+                var temp = new Point(start.x, start.y, start.val);
+                while (!found) {
+                    currentPath.push(temp);
+
+                    var arounds = temp.pointsAround();
+
+                    if (arounds.find(p => p.equal(end))) {
+                        currentPath.push(end);
+                        foundPaths.push(currentPath);
+                        currentPath = [];
+                        found = true;
+                    }
+
+                    var next = arounds.find((p) => {
+                        return currentPath.find((cp) => {
+                            return !cp.equal(p);
+                        });
+                    });
+
+                    if (next) temp = next;
+                    else found = true;
+                }
+
+                alert(JSON.stringify(foundPaths));
+            }
+
+
+        </script>
+</body>
+
+</html>
