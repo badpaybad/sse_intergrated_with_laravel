@@ -13,3 +13,8 @@
 Route::get('/', "SampleController@index")->name("index");
 
 Route::post('/sendMsg', "SampleController@sendMsg")->name("sendMsg");
+
+
+Route::get('/fineuploader/index', "FineUploaderController@index")->name("fineuploader.index");
+Route::post('/fineuploader/upload', "FineUploaderController@upload")->name("fineuploader.upload");
+Route::delete('/fineuploader/delete', "FineUploaderController@delete")->name("fineuploader.delete");
