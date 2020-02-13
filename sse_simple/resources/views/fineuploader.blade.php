@@ -32,14 +32,17 @@
     <script>
         $(document).ready(function() {
 
-            var galleryUploader<?php echo $clientId ?> = new qq.FineUploader({
+            var galleryUploader<?php echo $clientId ?> = new qq.FineUploader({               
                 multiple: false,
                 element: document.getElementById("uploadarea<?php echo $clientId ?>"),
                 // addExtraDropzone: $('.qq-upload-drop-area'),
                 template: 'qq-template-gallery-tiny',
                 //template:'qq-template-gallery',
                 request: {
-                    endpoint: '/fineuploader/upload/?id='
+                    endpoint: '/fineuploader/upload/?id=',
+                    customHeaders: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
                 },
                 thumbnails: {
                     placeholders: {
