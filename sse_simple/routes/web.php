@@ -13,3 +13,5 @@
 Route::get('/', "SampleController@index")->name("index");
 
 Route::post('/sendMsg', "SampleController@sendMsg")->name("sendMsg");
+
+Route::post('/videooverlay', "SampleController@videooverlay")->name("videooverlay");

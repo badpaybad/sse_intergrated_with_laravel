@@ -25,4 +25,11 @@ class SampleController extends Controller
         return json_encode(array("sucess"=>1));
 
     }
+
+    public function videooverlay(Request $request){
+        $request=$request->all();
+$data=@$request["data"];
+
+        return view("videooverlay",compact('data'));
+    }
 }

@@ -15,16 +15,41 @@
 <body>
     <div class="flex-center position-ref full-height">
         <h1>Simple SSE</h1>
-        <fieldset>
-            <legend>Your message(s)</legend>
-            <div id="messages">
+        <div style="float: left; width:69.8%">
+            <div>
+                <video id="video">
+                    <source src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
+                    <audio src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"></audio>
+                </video>
             </div>
             <div>
-                <input id="txtMessage"><button id="btnMessage" onclick="sendMsg()">Send</button>
+                <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
             </div>
-        </fieldset>
+        </div>
+        <div style="float: left;width: 30%">
+            <fieldset>
+                <legend>Your message(s)</legend>
+                <div id="messages">
+                </div>
+                <div>
+                    <input id="txtMessage" onkeyup="txtMessage_onKeyup(event)"><button id="btnMessage" onclick="txtMessage_sendMsg()">Send</button>
+                </div>
+            </fieldset>
+        </div>
+        <div style="clear:both;"></div>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <script src="/js/videooverlay/videooverlay.js"></script>
+    <script>
+        VideoOverlay.init('video');
+      
+        VideoOverlay.showOverlay('/videooverlay');
+
+        VideoPlayer.init('video', function(fullscreen) {
+            VideoOverlay.showOverlay('/videooverlay',fullscreen);
+        });
+    </script>
     <script>
         jQuery.ajaxSetup({
             headers: {
@@ -34,31 +59,40 @@
     </script>
     <script>
         var channelName = 'test'; //you channel to listener 
-        var subscriberName = 'test';//should be the same to channelName and 1st character should not begin with number.
-        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?c=' + channelName + '&s=' + subscriberName
-        +'&token='+encodeURIComponent('<?php echo \Auth::getSession()->getId()?>');
+        var subscriberName = 'test'; //should be the same to channelName and 1st character should not begin with number.
+        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?c=' + channelName + '&s=' + subscriberName +
+            '&token=' + encodeURIComponent('<?php echo \Auth::getSession()->getId() ?>');
 
         var myWorker = new SharedWorker(swUrl);
         myWorker.port.onmessage = function(e) {
             console.log(e);
             //todo: do with your logic
             var msgs = jQuery("#messages").html();
-            msgs = msgs + '<div>' +JSON.stringify( e.data) + '</div>';
-            jQuery("#messages").html(msgs);
+            msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
+            jQuery("#messages").html(msgs+'<div>');
+
+            VideoOverlay.showOverlay('/videooverlay');
         };
 
         myWorker.port.start();
 
-        function sendMsg() {
+        function txtMessage_sendMsg() {
             //call to server side to post msg to other
             var url = '/sendMsg';
             jQuery.post(url, {
                 csrf: '{{ csrf_token() }}',
-                c: channelName ,
+                c: channelName,
                 msg: jQuery('#txtMessage').val()
             }, function(response) {
                 // no need call other ajax call to reload new data into #messages
             }, "json");
+        }
+
+        function txtMessage_onKeyup(e) {
+            if (e.keyCode == 13) {
+                // e.preventDefault(); 
+                txtMessage_sendMsg();
+            }
         }
     </script>
 
