@@ -34,7 +34,16 @@ VideoOverlay = {
             data: msgs
         }, function (response) {
             VideoOverlay.$overlay.html(response + ' <button onclick="VideoPlayer.screenNormal()">Normal screen</button>' + '</div>');
+//https://stackoverflow.com/questions/1125084/how-to-make-the-window-full-screen-with-javascript-stretching-all-over-the-scre
 
+            VideoOverlay.domFullscreen(jQuery(document), fullscreen, {
+                position: 'auto',
+                top: 0,
+                width: '100%',
+                height: '100%',
+                left: 0,
+                zIndex: 0
+            });
             VideoOverlay.domFullscreen(VideoOverlay.$overlayBound, fullscreen, {
                 position: 'relative',
                 top: 0,
@@ -106,14 +115,14 @@ VideoPlayer = {
     $video: null,
     _videoFullScreen: false,
     _onFullScreenCallback: null,
-    init: function (videoId, onFullScreen) {
+    init: function (videoId, onFullScreenCallback) {
         VideoPlayer._videoId = videoId;
         VideoPlayer.$video = document.getElementById(videoId);
         VideoPlayer.$video.controls = false;
         VideoPlayer.$video.addEventListener('webkitfullscreenchange', VideoPlayer.onFullScreen);
         VideoPlayer.$video.addEventListener('mozfullscreenchange', VideoPlayer.onFullScreen);
         VideoPlayer.$video.addEventListener('fullscreenchange', VideoPlayer.onFullScreen);
-        VideoPlayer._onFullScreen = onFullScreen;
+        VideoPlayer._onFullScreenCallback = onFullScreenCallback;
         VideoPlayer.play();
     },
     onFullScreen: function (fullscreen) {
