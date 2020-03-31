@@ -26,6 +26,8 @@
                 <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
                 <button onclick="VideoPlayer.play()">Play</button>
                 <button onclick="VideoPlayer.pause()">Pause</button>
+                
+                <button onclick="VideoOverlay.hideOverlay()">Hide overlay</button>
             </div>
         </div>
         <div style="float: left;width: 30%">
@@ -72,6 +74,7 @@
             var msgs = jQuery("#messages").html();
             msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
             jQuery("#messages").html(msgs+'<div>');
+            VideoOverlay.showOverlay('/videooverlay');
         };
 
         myWorker.port.start();

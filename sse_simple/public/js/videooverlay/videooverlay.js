@@ -8,7 +8,26 @@ VideoOverlay = {
         VideoOverlay._videoId = domId;
         VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
     },
+    hideOverlay:function(){
+        VideoOverlay.$overlay = jQuery("#videoOverlay");
+        if (VideoOverlay.$overlay) {
+            cssOverlayOriginHide={
+                position: "relative",
+                width: 480,
+                height: 360,
+                border: "solid 1px black",
+                zIndex: 999,
+                display:'none'
+            };
+            VideoOverlay.$overlay.css(cssOverlayOriginHide);
+        }
+    },
     showOverlay: function(url, fullscreen) {
+
+        if(fullscreen==null || fullscreen=='undefined'){
+            fullscreen= VideoOverlay._isFullscreen;            
+        }
+
         VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
         VideoOverlay.$overlay = jQuery("#videoOverlay");
         VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
@@ -36,7 +55,8 @@ VideoOverlay = {
             width: 480,
             height: 360,
             border: "solid 1px black",
-            zIndex: 999
+            zIndex: 999,
+            display:'block'
         };
         cssOvelayOrignin={
             position: "absolute",
@@ -45,7 +65,9 @@ VideoOverlay = {
             width: 400,
             height: 100,
             zIndex: 99999,
-            border: "1px solid red"
+            border: "1px solid red",            
+            opacity:'0.5',
+            backgroundColor:'red'
         };
 
         VideoOverlay.$video.css(cssVideoOrigin);
