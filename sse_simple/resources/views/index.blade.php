@@ -29,10 +29,9 @@
         <div style="float: left;width: 30%">
             <fieldset>
                 <legend>Your message(s)</legend>
-                <div id="messages">
-                </div>
+                <div id="messages"></div>
                 <div>
-                    <input id="txtMessage" onkeyup="txtMessage_onKeyup(event)"><button id="btnMessage" onclick="txtMessage_sendMsg()">Send</button>
+                    <input id="txtMessage" onkeyup="txtMessage_onKeyup(this,event)"><button id="btnMessage" onclick="txtMessage_sendMsg('txtMessage')">Send</button>
                 </div>
             </fieldset>
         </div>
@@ -46,7 +45,7 @@
       
         VideoOverlay.showOverlay('/videooverlay');
 
-        VideoPlayer.init('video', function(fullscreen) {
+        VideoPlayer.init('video', function(fullscreen) {            
             VideoOverlay.showOverlay('/videooverlay',fullscreen);
         });
     </script>
@@ -76,22 +75,22 @@
 
         myWorker.port.start();
 
-        function txtMessage_sendMsg() {
+        function txtMessage_sendMsg(txtMessage) {
             //call to server side to post msg to other
             var url = '/sendMsg';
             jQuery.post(url, {
                 csrf: '{{ csrf_token() }}',
                 c: channelName,
-                msg: jQuery('#txtMessage').val()
+                msg: jQuery('#'+txtMessage).val()
             }, function(response) {
                 // no need call other ajax call to reload new data into #messages
             }, "json");
         }
 
-        function txtMessage_onKeyup(e) {
+        function txtMessage_onKeyup(sender, e) {
             if (e.keyCode == 13) {
                 // e.preventDefault(); 
-                txtMessage_sendMsg();
+                txtMessage_sendMsg(sender.id);
             }
         }
     </script>
