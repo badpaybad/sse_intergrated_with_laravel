@@ -47,7 +47,6 @@
         VideoOverlay.showOverlay('/videooverlay');
 
         VideoPlayer.init('video', function(fullscreen) {
-            console.log(123);
             VideoOverlay.showOverlay('/videooverlay',fullscreen);
         });
     </script>

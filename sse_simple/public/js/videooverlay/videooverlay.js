@@ -1,3 +1,6 @@
+
+
+
 VideoOverlay = {
     _rootId: null,
     $video: null,
@@ -7,8 +10,9 @@ VideoOverlay = {
         VideoOverlay._rootId = domId;
         VideoOverlay.$video = jQuery('#' + domId);
     },
-    showOverlay: function (url, fullscreen, msgs) {
+    showOverlay: function (url, fullscreen) {
 
+        console.log("aa");
         VideoOverlay.$overlayBound = jQuery('#videoOverlayBound');
         VideoOverlay.$overlay = jQuery('#videoOverlay');
 
@@ -31,19 +35,12 @@ VideoOverlay = {
         jQuery.post(url, {
             //csrf: '{{ csrf_token() }}',
             //c: channelName,
-            data: msgs
+           // data: msgs
         }, function (response) {
             VideoOverlay.$overlay.html(response + ' <button onclick="VideoPlayer.screenNormal()">Normal screen</button>' + '</div>');
-//https://stackoverflow.com/questions/1125084/how-to-make-the-window-full-screen-with-javascript-stretching-all-over-the-scre
+            //https://stackoverflow.com/questions/1125084/how-to-make-the-window-full-screen-with-javascript-stretching-all-over-the-scre
 
-            VideoOverlay.domFullscreen(jQuery(document), fullscreen, {
-                position: 'auto',
-                top: 0,
-                width: '100%',
-                height: '100%',
-                left: 0,
-                zIndex: 0
-            });
+
             VideoOverlay.domFullscreen(VideoOverlay.$overlayBound, fullscreen, {
                 position: 'relative',
                 top: 0,
@@ -61,7 +58,11 @@ VideoOverlay = {
                 left: 0,
                 zIndex: 9999
             });
+
+
         });
+        console.log("bbb");
+        VideoOverlay.requestFullScreen(document.documentElement);
     },
     removeOverlay: function () {
         VideoOverlay.$overlayBound = jQuery('#videoOverlayBound');
@@ -75,7 +76,26 @@ VideoOverlay = {
         }
         VideoOverlay.$video.attr('style', '');
     },
-
+    requestFullScreen:function(element) {
+    
+        console.log(1);
+        // Supports most browsers and their versions.
+        var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+    
+        if (requestMethod) { // Native full screen.
+            requestMethod.call(element);
+            
+            console.log(123);
+        } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+            var wscript = new ActiveXObject("WScript.Shell");
+            if (wscript !== null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+        
+        console.log(1234);
+    }
+,
     domFullscreen: function ($obj, fullscreen, cssOrigin) {
 
         if (fullscreen) {
@@ -85,10 +105,12 @@ VideoOverlay = {
                 right: 0,
                 bottom: 0,
                 left: 0,
-                width:'100%',
-                height:'100%',
+                width: '100%',
+                height: '100%',
                 zIndex: cssOrigin.zIndex
             });
+
+
             // if ($obj.requestFullScreen) {
             //     $obj.requestFullScreen();
             // } else if ($obj.webkitRequestFullScreen) {
@@ -128,7 +150,7 @@ VideoPlayer = {
     onFullScreen: function (fullscreen) {
         if (VideoPlayer._onFullScreenCallback) {
             VideoPlayer._onFullScreenCallback(fullscreen);
-        }      
+        }
     },
     play: function () {
         var vid = VideoPlayer.$video;
@@ -173,16 +195,16 @@ VideoPlayer = {
     }
     ,
     domFullscreen: function ($obj, fullscreen, cssOrigin) {
-        $obj=jQuery($obj);
+        $obj = jQuery($obj);
         if (fullscreen) {
             $obj.css({
                 position: 'fixed',
                 top: 0,
                 right: 0,
                 bottom: 0,
-                left: 0, 
-                width:'100%',
-                height:'100%',
+                left: 0,
+                width: '100%',
+                height: '100%',
                 zIndex: cssOrigin.zIndex
             });
             // if ($obj.requestFullScreen) {
