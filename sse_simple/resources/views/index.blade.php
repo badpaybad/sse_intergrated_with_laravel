@@ -80,7 +80,7 @@
             msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
             jQuery("#messages").html(msgs+'<div>');
 
-            VideoOverlay.loadOverlayContent('/videooverlay');
+            VideoOverlay.loadOverlayContent('/videooverlay', msgs);
         };
 
         myWorker.port.start();
