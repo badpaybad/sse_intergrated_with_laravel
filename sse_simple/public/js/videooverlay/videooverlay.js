@@ -80,6 +80,24 @@ VideoOverlay = {
             }
         );
     },
+    setOverlayPosition:function(css){
+        cssOvelayOrignin = {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 400,
+            height: 360,
+            zIndex: 99999,
+            border: "1px solid red",
+            opacity: "0.5",
+            display: "block",
+            backgroundColor: "red"
+        };
+
+        VideoOverlay.$overlay = jQuery("#videoOverlay");
+        VideoOverlay.$overlay.css(cssOvelayOrignin);
+
+    },
     showOverlay: function(fullscreen) {
         if (fullscreen == null || fullscreen == "undefined") {
             fullscreen = VideoOverlay._isFullscreen;
@@ -109,8 +127,8 @@ VideoOverlay = {
             position: "absolute",
             top: 0,
             left: 0,
-            width: 400,
-            height: 100,
+            width: 240,
+            height: 360,
             zIndex: 99999,
             border: "1px solid red",
             opacity: "0.5",
