@@ -36,7 +36,7 @@ class SampleController extends Controller
     public function videooverlay(Request $request)
     {
         $request = $request->all();
-        $data = now();
+        $data = @$request["data"];
 
         return view("videooverlay", compact('data'));
     }

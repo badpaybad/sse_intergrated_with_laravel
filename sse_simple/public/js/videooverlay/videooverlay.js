@@ -61,7 +61,7 @@ VideoOverlay = {
             VideoOverlay.$overlay.css(cssOverlayOriginHide);
         }
     },
-    loadOverlayContent: function(url) {
+    loadOverlayContent: function(url,msgs) {
         VideoOverlay._currentUrl = url;
 
         jQuery.post(
@@ -69,7 +69,7 @@ VideoOverlay = {
             {
                 //csrf: '{{ csrf_token() }}',
                 //c: channelName,
-                // data: msgs
+                 data: msgs
             },
             function(response) {
                 VideoOverlay.$overlay.html(
@@ -245,7 +245,6 @@ VideoPlayer = {
 
         VideoPlayer._onFullScreenCallback = onFullScreenCallback;
         VideoPlayer.play();
-
         
         VideoPlayer.escKeyPress(document);
         VideoPlayer.escKeyPress(window);
@@ -308,24 +307,11 @@ VideoPlayer = {
                 height: "100%",
                 zIndex: cssOrigin.zIndex
             });
-            // if ($obj.requestFullScreen) {
-            //     $obj.requestFullScreen();
-            // } else if ($obj.webkitRequestFullScreen) {
-            //     $obj.webkitRequestFullScreen();
-            // } else if ($obj.mozRequestFullScreen) {
-            //     $obj.mozRequestFullScreen();
-            // }
+          
             VideoPlayer.onFullScreen(true);
         } else {
             $obj.css(cssOrigin);
-            // if ($obj.requestFullScreen) {
-            //     $obj.exitFullscreen();
-            // } else if ($obj.webkitRequestFullScreen) {
-            //     $obj.webkitExitFullscreen();
-            // } else if ($obj.mozRequestFullScreen) {
-            //     $obj.mozExitFullscreen();
-            // }
-
+          
             VideoPlayer.onFullScreen(false);
         }
     },
