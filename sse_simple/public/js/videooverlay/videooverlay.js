@@ -4,85 +4,68 @@ VideoOverlay = {
     $overlayBound: null,
     $overlay: null,
     _isFullscreen: false,
+    _currentUrl: null,
     init: function(domId) {
         VideoOverlay._videoId = domId;
         VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
-    },
-    hideOverlay:function(){
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
-        if (VideoOverlay.$overlay) {
-            cssOverlayOriginHide={
-                position: "relative",
-                width: 480,
-                height: 360,
-                border: "solid 1px black",
-                zIndex: 999,
-                display:'none'
-            };
-            VideoOverlay.$overlay.css(cssOverlayOriginHide);
-        }
-    },
-    showOverlay: function(url, fullscreen) {
-
-        if(fullscreen==null || fullscreen=='undefined'){
-            fullscreen= VideoOverlay._isFullscreen;            
-        }
 
         VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
         VideoOverlay.$overlay = jQuery("#videoOverlay");
-        VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
-
         if (VideoOverlay.$overlay) {
             VideoOverlay.$overlay.remove();
         }
         if (VideoOverlay.$overlayBound) {
             VideoOverlay.$video.unwrap();
         }
-       
-        VideoOverlay.$video.wrap("<div id='videoOverlayBound'></div>");
-        VideoOverlay.$video.before("<div id='videoOverlay'>loading ...</div>");
 
-        cssVideoOrigin={
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 480,
-            height: 360,
-            zIndex: 9999
-        };
-        cssOverlayBoundOrigin={
-            position: "relative",
-            width: 480,
-            height: 360,
-            border: "solid 1px black",
-            zIndex: 999,
-            display:'block'
-        };
-        cssOvelayOrignin={
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 400,
-            height: 100,
-            zIndex: 99999,
-            border: "1px solid red",            
-            opacity:'0.5',
-            backgroundColor:'red'
-        };
+        VideoOverlay.escKeyPress(document);
+        VideoOverlay.escKeyPress(window);
 
-        VideoOverlay.$video.css(cssVideoOrigin);
-
-        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-        VideoOverlay.$overlayBound.css(cssOverlayBoundOrigin);
-
+        VideoOverlay.escKeyPress(VideoOverlay.$video);
+    },
+    escKeyPress: function(element) {
+        $(element).keyup(function(e) {
+            
+            var isEscPress = false;
+            var key = e.which || event.key || event.keyCode;
+            
+            if (key == 27 ||  key == 'Esc' || key == "Escape") {
+                isEscPress = true;
+            }
+            if (isEscPress) {
+                VideoOverlay._isFullscreen=false;
+                VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
+                VideoOverlay.$overlay = jQuery("#videoOverlay");
+                if (VideoOverlay.$overlay) {
+                    VideoOverlay.$overlay.remove();
+                }
+                if (VideoOverlay.$overlayBound) {
+                    VideoOverlay.$video.unwrap();
+                }
+                VideoOverlay.showOverlay(false);
+                VideoOverlay.loadOverlayContent(VideoOverlay._currentUrl);
+            }
+        });
+    },
+    hideOverlay: function() {
         VideoOverlay.$overlay = jQuery("#videoOverlay");
-        VideoOverlay.$overlay.css(cssOvelayOrignin);       
-                
-        VideoOverlay.domFullscreen(VideoOverlay.$video, fullscreen, cssVideoOrigin);
-        VideoOverlay.domFullscreen(VideoOverlay.$overlayBound, fullscreen, cssOverlayBoundOrigin);
+        if (VideoOverlay.$overlay) {
+            cssOverlayOriginHide = {
+                position: "relative",
+                width: 480,
+                height: 360,
+                border: "solid 1px black",
+                zIndex: 999,
+                display: "none"
+            };
+            VideoOverlay.$overlay.css(cssOverlayOriginHide);
+        }
+    },
+    loadOverlayContent: function(url) {
+        VideoOverlay._currentUrl = url;
 
         jQuery.post(
-            url,
+            VideoOverlay._currentUrl,
             {
                 //csrf: '{{ csrf_token() }}',
                 //c: channelName,
@@ -95,6 +78,63 @@ VideoOverlay = {
                         "</div>"
                 );
             }
+        );
+    },
+    showOverlay: function(fullscreen) {
+        if (fullscreen == null || fullscreen == "undefined") {
+            fullscreen = VideoOverlay._isFullscreen;
+        }
+
+        VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
+
+        VideoOverlay.$video.wrap("<div id='videoOverlayBound'></div>");
+        VideoOverlay.$video.before("<div id='videoOverlay'></div>");
+
+        cssVideoOrigin = {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 480,
+            height: 360,
+            zIndex: 9999
+        };
+        cssOverlayBoundOrigin = {
+            position: "relative",
+            width: 480,
+            height: 360,
+            border: "solid 1px black",
+            zIndex: 999,
+            display: "block"
+        };
+        cssOvelayOrignin = {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 400,
+            height: 100,
+            zIndex: 99999,
+            border: "1px solid red",
+            opacity: "0.5",
+            backgroundColor: "red"
+        };
+
+        VideoOverlay.$video.css(cssVideoOrigin);
+
+        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
+        VideoOverlay.$overlayBound.css(cssOverlayBoundOrigin);
+
+        VideoOverlay.$overlay = jQuery("#videoOverlay");
+        VideoOverlay.$overlay.css(cssOvelayOrignin);
+
+        VideoOverlay.domFullscreen(
+            VideoOverlay.$video,
+            fullscreen,
+            cssVideoOrigin
+        );
+        VideoOverlay.domFullscreen(
+            VideoOverlay.$overlayBound,
+            fullscreen,
+            cssOverlayBoundOrigin
         );
     },
     removeOverlay: function() {
@@ -187,9 +227,14 @@ VideoPlayer = {
 
         VideoPlayer._onFullScreenCallback = onFullScreenCallback;
         VideoPlayer.play();
+
+        
+        VideoPlayer.escKeyPress(document);
+        VideoPlayer.escKeyPress(window);
+        VideoPlayer.escKeyPress(VideoPlayer.$video);
     },
     onFullScreen: function(fullscreen) {
-        alert(fullscreen==true?"fullscreen mode":"normal mode");
+        alert(fullscreen == true ? "fullscreen mode" : "normal mode");
         if (VideoPlayer._onFullScreenCallback) {
             VideoPlayer._onFullScreenCallback(fullscreen);
         }
@@ -206,7 +251,7 @@ VideoPlayer = {
             vid.pause();
         }
     },
-    screenFull: function() {        
+    screenFull: function() {
         if (VideoPlayer._videoFullScreen == true) return;
 
         VideoPlayer._videoFullScreen = true;
@@ -218,7 +263,6 @@ VideoPlayer = {
             left: 0,
             zIndex: 999
         });
-
     },
     screenNormal: function() {
         if (VideoPlayer._videoFullScreen == false) return;
@@ -232,7 +276,6 @@ VideoPlayer = {
             left: 0,
             zIndex: 999
         });
-
     },
     domFullscreen: function($obj, fullscreen, cssOrigin) {
         $obj = jQuery($obj);
@@ -267,5 +310,20 @@ VideoPlayer = {
 
             VideoPlayer.onFullScreen(false);
         }
+    },
+    escKeyPress: function(element) {
+        $(element).keyup(function(e) {
+            
+            var isEscPress = false;
+            var key = e.which || event.key || event.keyCode;
+            
+            if (key == 27 ||  key == 'Esc' || key == "Escape") {
+                isEscPress = true;
+            }
+            if (isEscPress) {
+                VideoPlayer.screenNormal();
+                VideoPlayer._videoFullScreen=false;              
+            }
+        });
     }
 };

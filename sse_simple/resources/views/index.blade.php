@@ -26,8 +26,9 @@
                 <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
                 <button onclick="VideoPlayer.play()">Play</button>
                 <button onclick="VideoPlayer.pause()">Pause</button>
-                
+                                
                 <button onclick="VideoOverlay.hideOverlay()">Hide overlay</button>
+                <button onclick="VideoOverlay.showOverlay();VideoOverlay.loadOverlayContent('/videooverlay')">Show content overlay</button>
             </div>
         </div>
         <div style="float: left;width: 30%">
@@ -47,11 +48,15 @@
     <script>
         VideoOverlay.init('video');
       
-        VideoOverlay.showOverlay('/videooverlay');
-
+        VideoOverlay.showOverlay();
+        
+        VideoOverlay.loadOverlayContent('/videooverlay');
+        
         VideoPlayer.init('video', function(fullscreen) {         
             
-            VideoOverlay.showOverlay('/videooverlay',fullscreen);
+            VideoOverlay.showOverlay(fullscreen);
+            VideoOverlay.loadOverlayContent('/videooverlay');
+            
         });
     </script>
     <script>
@@ -74,7 +79,8 @@
             var msgs = jQuery("#messages").html();
             msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
             jQuery("#messages").html(msgs+'<div>');
-            VideoOverlay.showOverlay('/videooverlay');
+
+            VideoOverlay.loadOverlayContent('/videooverlay');
         };
 
         myWorker.port.start();
