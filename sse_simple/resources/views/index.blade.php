@@ -28,7 +28,7 @@
                 <button onclick="VideoPlayer.pause()">Pause</button>
                                 
                 <button onclick="VideoOverlay.hideOverlay()">Hide overlay</button>
-                <button onclick="VideoOverlay.showOverlay();VideoOverlay.loadOverlayContent('/videooverlay')">Show content overlay</button>
+                <button onclick="VideoOverlay.showOverlay();VideoOverlay.loadOverlayContent('/videooverlay');">Show content overlay</button>
             </div>
         </div>
         <div style="float: left;width: 30%">
@@ -56,7 +56,7 @@
             
             VideoOverlay.showOverlay(fullscreen);
             VideoOverlay.loadOverlayContent('/videooverlay');
-            
+
         });
     </script>
     <script>

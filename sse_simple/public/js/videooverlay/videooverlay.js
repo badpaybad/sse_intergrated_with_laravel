@@ -103,8 +103,7 @@ VideoOverlay = {
             width: 480,
             height: 360,
             border: "solid 1px black",
-            zIndex: 999,
-            display: "block"
+            zIndex: 999
         };
         cssOvelayOrignin = {
             position: "absolute",
@@ -115,6 +114,7 @@ VideoOverlay = {
             zIndex: 99999,
             border: "1px solid red",
             opacity: "0.5",
+            display: "block",
             backgroundColor: "red"
         };
 
