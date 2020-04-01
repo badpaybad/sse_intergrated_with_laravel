@@ -12,7 +12,7 @@
 <body>
     <div class="flex-center position-ref full-height">
         <h1>Simple SSE</h1>
-        <div style="float: left; width:69.8%;">
+        <div >
             <div>
                 <!-- <video id="video1">
                     <source src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
@@ -31,7 +31,7 @@
                 <button onclick="VideoOverlay.showOverlay();VideoOverlay.loadOverlayContent('/videooverlay');">Show content overlay</button>
             </div>
         </div>
-        <div style="float: left;width: 30%">
+        <div >
             <fieldset>
                 <legend>Your message(s)</legend>
                 <div id="messages"></div>
