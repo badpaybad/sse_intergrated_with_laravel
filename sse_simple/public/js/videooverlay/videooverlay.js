@@ -5,7 +5,10 @@ VideoOverlay = {
     $overlay: null,
     _isFullscreen: false,
     _currentUrl: null,
-    init: function(domId) {
+    _cssBound: null,
+    _cssVideo: null,
+    _cssOverlay: null,
+    init: function (domId) {
         VideoOverlay._videoId = domId;
         VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
 
@@ -23,17 +26,17 @@ VideoOverlay = {
 
         VideoOverlay.escKeyPress(VideoOverlay.$video);
     },
-    escKeyPress: function(element) {
-        $(element).keyup(function(e) {
-            
+    escKeyPress: function (element) {
+        $(element).keyup(function (e) {
+
             var isEscPress = false;
             var key = e.which || event.key || event.keyCode;
-            
-            if (key == 27 ||  key == 'Esc' || key == "Escape") {
+
+            if (key == 27 || key == 'Esc' || key == "Escape") {
                 isEscPress = true;
             }
             if (isEscPress) {
-                VideoOverlay._isFullscreen=false;
+                VideoOverlay._isFullscreen = false;
                 VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
                 VideoOverlay.$overlay = jQuery("#videoOverlay");
                 if (VideoOverlay.$overlay) {
@@ -47,21 +50,61 @@ VideoOverlay = {
             }
         });
     },
-    hideOverlay: function() {
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
+    hideOverlay: function () {
         if (VideoOverlay.$overlay) {
-            cssOverlayOriginHide = {
-                position: "relative",
-                width: 480,
-                height: 360,
-                border: "solid 1px black",
-                zIndex: 999,
-                display: "none"
-            };
-            VideoOverlay.$overlay.css(cssOverlayOriginHide);
+            VideoOverlay._cssOverlay.display = "none";
+            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
         }
     },
-    loadOverlayContent: function(url,msgs) {
+    showOverlay: function () {
+        if (VideoOverlay.$overlay) {
+            VideoOverlay._cssOverlay.display = "block";
+            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+        }
+    },
+    changeOverlayPosition: function (data) {
+        if (!data) return;
+        if (!data.position) return;
+
+        if (data.opacity) {
+            VideoOverlay._cssOverlay.opacity = data.opacity;
+        }
+
+        if (data.show || data.show == 'true') {
+            VideoOverlay._cssOverlay.display = 'block';
+        }
+        else {
+            VideoOverlay._cssOverlay.display = 'none';
+        }
+
+        if (data.position == 'top') {
+            VideoOverlay._cssOverlay.top = 0;
+            VideoOverlay._cssOverlay.left = 0;
+            VideoOverlay._cssOverlay.width = '100%';
+            VideoOverlay._cssOverlay.height = '50%';
+        }
+        if (data.position == 'right') {
+            VideoOverlay._cssOverlay.top = 0;
+            VideoOverlay._cssOverlay.right = 0;
+            VideoOverlay._cssOverlay.width = '50%';
+            VideoOverlay._cssOverlay.height = '100%';
+        }
+        if (data.position == 'bottom') {
+            VideoOverlay._cssOverlay.bottom = 0;
+            VideoOverlay._cssOverlay.left = 0;
+            VideoOverlay._cssOverlay.width = '100%';
+            VideoOverlay._cssOverlay.height = '50%';
+        }
+        if (data.position == 'left') {
+            VideoOverlay._cssOverlay.top = 0;
+            VideoOverlay._cssOverlay.left = 0;
+            VideoOverlay._cssOverlay.width = '50%';
+            VideoOverlay._cssOverlay.height = '100%';
+        }
+        VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+
+    },
+    loadOverlayContent: function (url, data) {
         VideoOverlay._currentUrl = url;
 
         jQuery.post(
@@ -69,93 +112,88 @@ VideoOverlay = {
             {
                 //csrf: '{{ csrf_token() }}',
                 //c: channelName,
-                 data: msgs
+                data: data
             },
-            function(response) {
+            function (response) {
                 VideoOverlay.$overlay.html(
                     response +
-                        ' <button onclick="VideoPlayer.screenNormal()">Normal screen</button>' +
-                        "</div>"
+                    ' <button onclick="VideoPlayer.screenNormal()">Normal screen</button>' +
+                    "</div>"
                 );
             }
         );
     },
-    setOverlayPosition:function(css){
-        cssOvelayOrignin = {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 400,
-            height: 360,
-            zIndex: 99999,
-            border: "1px solid red",
-            opacity: "0.5",
-            display: "block",
-            backgroundColor: "red"
-        };
-
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
-        VideoOverlay.$overlay.css(cssOvelayOrignin);
-
-    },
-    showOverlay: function(fullscreen) {
+    requestFullscreen: function (fullscreen) {
         if (fullscreen == null || fullscreen == "undefined") {
             fullscreen = VideoOverlay._isFullscreen;
         }
 
-        VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
+        VideoOverlay.domFullscreen(
+            VideoOverlay.$video,
+            fullscreen,
+            VideoOverlay._cssVideo
+        );
+        VideoOverlay.domFullscreen(
+            VideoOverlay.$overlayBound,
+            fullscreen,
+            VideoOverlay._cssBound
+        );
+    },
+    initOverlay: function () {
 
+        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
+        VideoOverlay.$overlay = jQuery("#videoOverlay");
+
+        if (VideoOverlay.$overlay && VideoOverlay.$overlay.id == "videoOverlay") {
+            VideoOverlay.$overlay.remove();
+        }
+        if (VideoOverlay.$overlayBound && VideoOverlay.$overlayBound.id == 'videoOverlayBound') {
+            VideoOverlay.$video.unwrap();
+        }
+
+        VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
         VideoOverlay.$video.wrap("<div id='videoOverlayBound'></div>");
         VideoOverlay.$video.before("<div id='videoOverlay'></div>");
 
-        cssVideoOrigin = {
+        VideoOverlay._cssVideo = {
             position: "absolute",
             top: 0,
             left: 0,
-            width: 480,
-            height: 360,
+            width: VideoOverlay.$video.width(),
+            height: VideoOverlay.$video.height(),
             zIndex: 9999
         };
-        cssOverlayBoundOrigin = {
+        VideoOverlay._cssBound = {
             position: "relative",
-            width: 480,
-            height: 360,
-            border: "solid 1px black",
-            zIndex: 999
+            width: VideoOverlay.$video.width(),
+            height: VideoOverlay.$video.height(),
+            border: "",
+            zIndex: 999,
+            overflow: 'visible'
         };
-        cssOvelayOrignin = {
+        VideoOverlay._cssOverlay = {
             position: "absolute",
             top: 0,
-            left: 0,
-            width: 240,
-            height: 360,
+            right: 0,
+            //float:'right',
+            width: '50%',
+            height: VideoOverlay.$video.height(),
             zIndex: 99999,
-            border: "1px solid red",
             opacity: "0.5",
             display: "block",
             backgroundColor: "red"
         };
 
-        VideoOverlay.$video.css(cssVideoOrigin);
+        VideoOverlay.$video.css(VideoOverlay._cssVideo);
 
         VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-        VideoOverlay.$overlayBound.css(cssOverlayBoundOrigin);
+        VideoOverlay.$overlayBound.css(VideoOverlay._cssBound);
 
         VideoOverlay.$overlay = jQuery("#videoOverlay");
-        VideoOverlay.$overlay.css(cssOvelayOrignin);
+        VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
 
-        VideoOverlay.domFullscreen(
-            VideoOverlay.$video,
-            fullscreen,
-            cssVideoOrigin
-        );
-        VideoOverlay.domFullscreen(
-            VideoOverlay.$overlayBound,
-            fullscreen,
-            cssOverlayBoundOrigin
-        );
     },
-    removeOverlay: function() {
+    removeOverlay: function () {
         VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
         VideoOverlay.$overlay = jQuery("#videoOverlay");
 
@@ -166,8 +204,10 @@ VideoOverlay = {
             VideoOverlay.$video.unwrap();
         }
         VideoOverlay.$video.attr("style", "");
+        VideoOverlay._cssVideo.position = "auto";
+        VideoOverlay.$video.css(VideoOverlay._cssVideo);
     },
-    requestFullScreen: function(element, isExitFullscreen) {
+    requestFullScreen: function (element, isExitFullscreen) {
         if (isExitFullscreen == true) {
             // Supports most browsers and their versions.
             var requestMethod =
@@ -208,7 +248,7 @@ VideoOverlay = {
             }
         }
     },
-    domFullscreen: function($obj, fullscreen, cssOrigin) {
+    domFullscreen: function ($obj, fullscreen, cssOrigin) {
         if (fullscreen == true && VideoOverlay._isFullscreen == false) {
             $obj.css({
                 position: "fixed",
@@ -238,37 +278,37 @@ VideoPlayer = {
     $video: null,
     _videoFullScreen: false,
     _onFullScreenCallback: null,
-    init: function(videoId, onFullScreenCallback) {
+    init: function (videoId, onFullScreenCallback) {
         VideoPlayer._videoId = videoId;
         VideoPlayer.$video = document.getElementById(videoId);
         VideoPlayer.$video.controls = false;
 
         VideoPlayer._onFullScreenCallback = onFullScreenCallback;
         VideoPlayer.play();
-        
+
         VideoPlayer.escKeyPress(document);
         VideoPlayer.escKeyPress(window);
         VideoPlayer.escKeyPress(VideoPlayer.$video);
     },
-    onFullScreen: function(fullscreen) {
+    onFullScreen: function (fullscreen) {
         alert(fullscreen == true ? "fullscreen mode" : "normal mode");
         if (VideoPlayer._onFullScreenCallback) {
             VideoPlayer._onFullScreenCallback(fullscreen);
         }
     },
-    play: function() {
+    play: function () {
         var vid = VideoPlayer.$video;
         if (vid.paused) {
             vid.play();
         }
     },
-    pause: function() {
+    pause: function () {
         var vid = VideoPlayer.$video;
         if (!vid.paused) {
             vid.pause();
         }
     },
-    screenFull: function() {
+    screenFull: function () {
         if (VideoPlayer._videoFullScreen == true) return;
 
         VideoPlayer._videoFullScreen = true;
@@ -281,7 +321,7 @@ VideoPlayer = {
             zIndex: 999
         });
     },
-    screenNormal: function() {
+    screenNormal: function () {
         if (VideoPlayer._videoFullScreen == false) return;
 
         VideoPlayer._videoFullScreen = false;
@@ -294,7 +334,7 @@ VideoPlayer = {
             zIndex: 999
         });
     },
-    domFullscreen: function($obj, fullscreen, cssOrigin) {
+    domFullscreen: function ($obj, fullscreen, cssOrigin) {
         $obj = jQuery($obj);
         if (fullscreen) {
             $obj.css({
@@ -307,26 +347,26 @@ VideoPlayer = {
                 height: "100%",
                 zIndex: cssOrigin.zIndex
             });
-          
+
             VideoPlayer.onFullScreen(true);
         } else {
             $obj.css(cssOrigin);
-          
+
             VideoPlayer.onFullScreen(false);
         }
     },
-    escKeyPress: function(element) {
-        $(element).keyup(function(e) {
-            
+    escKeyPress: function (element) {
+        $(element).keyup(function (e) {
+
             var isEscPress = false;
             var key = e.which || event.key || event.keyCode;
-            
-            if (key == 27 ||  key == 'Esc' || key == "Escape") {
+
+            if (key == 27 || key == 'Esc' || key == "Escape") {
                 isEscPress = true;
             }
             if (isEscPress) {
                 VideoPlayer.screenNormal();
-                VideoPlayer._videoFullScreen=false;              
+                VideoPlayer._videoFullScreen = false;
             }
         });
     }

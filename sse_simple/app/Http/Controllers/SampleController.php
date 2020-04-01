@@ -22,13 +22,20 @@ class SampleController extends Controller
         $channelName = $request["c"];
         $msg = $request["msg"];
         $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
+
+        $positsion=['top','right','bottom','left'];
+        $url=["/videooverlay?c=1","/videooverlay?c=2","/videooverlay?c=3","/videooverlay?c=4"];
+        $show=[true, false];
+        $opacity=["0.5","0.75","1"];
+
         $this->sse->SendToChannel($channelName, json_encode(array(
             "channel" => $channelName
         , "datetime" => date('c'), "msg" => $msg,
         "show"=>true,
-        "position"=>"top",
-        "url"=>"/videooverlay",
-        "transparent"=>"0.5"
+        "position"=> $positsion[rand(0,3)],
+        "url"=> $url[rand(0,3)],
+        "opacity"=>$opacity[rand(0,2)],
+        'show'=>true
     )));
         return json_encode(array("sucess" => 1));
     }
@@ -37,7 +44,8 @@ class SampleController extends Controller
     {
         $request = $request->all();
         $data = @$request["data"];
+        $c = @$request["c"];
 
-        return view("videooverlay", compact('data'));
+        return view("videooverlay", compact('data','c'));
     }
 }
