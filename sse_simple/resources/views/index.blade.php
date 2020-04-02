@@ -51,7 +51,7 @@
 
         VideoOverlay.initOverlay();
 
-        //VideoOverlay.loadOverlayContent('/videooverlay');//load content inside overlay in page load
+        VideoOverlay.loadOverlayContent('/videooverlay');//load content inside overlay in page load
 
         VideoPlayer.init('video', function(fullscreen) {
             VideoOverlay.requestFullscreen(fullscreen);
