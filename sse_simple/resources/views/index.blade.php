@@ -19,7 +19,7 @@
                     <audio src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"></audio>
                 </video> -->
 
-                <iframe id="video" width="475" height="292" src="https://www.youtube.com/embed/opSTMWHPuI4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="video" width="320" height="240" src="https://www.youtube.com/embed/opSTMWHPuI4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
             <div>
                 <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
