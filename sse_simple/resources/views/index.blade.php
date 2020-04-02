@@ -13,7 +13,7 @@
     <div class="flex-center position-ref full-height">
         <h1>Simple SSE</h1>
         <div>
-            <div>
+            <div >
                 <!-- <video id="video1">
                     <source src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
                     <audio src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"></audio>

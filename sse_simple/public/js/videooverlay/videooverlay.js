@@ -8,6 +8,7 @@ VideoOverlay = {
     _cssBound: null,
     _cssVideo: null,
     _cssOverlay: null,
+    _cssOverlayFov:null,
     init: function (domId) {
         VideoOverlay._videoId = domId;
         VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
@@ -37,16 +38,8 @@ VideoOverlay = {
             }
             if (isEscPress) {
                 VideoOverlay._isFullscreen = false;
-                VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-                VideoOverlay.$overlay = jQuery("#videoOverlay");
-                if (VideoOverlay.$overlay) {
-                    VideoOverlay.$overlay.remove();
-                }
-                if (VideoOverlay.$overlayBound) {
-                    VideoOverlay.$video.unwrap();
-                }
-                VideoOverlay.showOverlay(false);
-                VideoOverlay.loadOverlayContent(VideoOverlay._currentUrl);
+
+                VideoOverlay.requestFullscreen(false);
             }
         });
     },
@@ -103,6 +96,11 @@ VideoOverlay = {
         }
         VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
 
+        if(VideoOverlay._isFullscreen==true){
+            
+            VideoOverlay.overlayFullscreen(true);
+        }
+
     },
     loadOverlayContent: function (url, data) {
         VideoOverlay._currentUrl = url;
@@ -138,6 +136,46 @@ VideoOverlay = {
             fullscreen,
             VideoOverlay._cssBound
         );
+
+        VideoOverlay.overlayFullscreen(fullscreen);
+
+        VideoOverlay._isFullscreen= fullscreen;        
+
+    },
+    overlayFullscreen:function(fullscreen){
+        if(fullscreen==true){
+            
+            VideoOverlay._cssOverlayFov = { position: "fixed" };
+
+            if (VideoOverlay._cssOverlay.top)
+                VideoOverlay._cssOverlayFov.top = VideoOverlay._cssOverlay.top;
+
+            if (VideoOverlay._cssOverlay.right)
+                VideoOverlay._cssOverlayFov.right = VideoOverlay._cssOverlay.right;
+
+            if (VideoOverlay._cssOverlay.bottom)
+                VideoOverlay._cssOverlayFov.bottom = VideoOverlay._cssOverlay.bottom;
+
+            if (VideoOverlay._cssOverlay.left)
+                VideoOverlay._cssOverlayFov.left = VideoOverlay._cssOverlay.left;
+
+            if (VideoOverlay._cssOverlay.width)
+                VideoOverlay._cssOverlayFov.width = VideoOverlay._cssOverlay.width;
+                
+            if (VideoOverlay._cssOverlay.height)
+                VideoOverlay._cssOverlayFov.height = VideoOverlay._cssOverlay.height;
+
+            if (VideoOverlay._cssOverlay.display)
+                VideoOverlay._cssOverlayFov.display = VideoOverlay._cssOverlay.display;
+
+            if (VideoOverlay._cssOverlay.opacity)
+                VideoOverlay._cssOverlayFov.opacity = VideoOverlay._cssOverlay.opacity;
+
+            VideoOverlay.$overlay.css(VideoOverlay._cssOverlayFov);
+
+        }else{
+            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+        }
     },
     initOverlay: function () {
 
@@ -155,6 +193,9 @@ VideoOverlay = {
         VideoOverlay.$video.wrap("<div id='videoOverlayBound'></div>");
         VideoOverlay.$video.before("<div id='videoOverlay'></div>");
 
+        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
+        VideoOverlay.$overlay = jQuery("#videoOverlay");
+
         VideoOverlay._cssVideo = {
             position: "absolute",
             top: 0,
@@ -169,7 +210,7 @@ VideoOverlay = {
             height: VideoOverlay.$video.height(),
             border: "",
             zIndex: 999,
-            overflow: 'visible'
+            overflow: 'hidden'
         };
         VideoOverlay._cssOverlay = {
             position: "absolute",
@@ -177,19 +218,30 @@ VideoOverlay = {
             right: 0,
             //float:'right',
             width: '50%',
-            height: VideoOverlay.$video.height(),
+            height: '100%',
             zIndex: 99999,
             opacity: "0.5",
             display: "block",
-            backgroundColor: "red"
+            backgroundColor: "red",
+            overflow: 'auto'
         };
-
+        VideoOverlay._cssOverlayFov = {
+            position: "fixed",
+            top: 0,
+            right: 0,
+            //float:'right',
+            width: '50%',
+            height: '100%',
+            zIndex: 99999,
+            opacity: "0.5",
+            display: "block",
+            backgroundColor: "red",            
+            overflow: 'auto'
+        };
         VideoOverlay.$video.css(VideoOverlay._cssVideo);
 
-        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
         VideoOverlay.$overlayBound.css(VideoOverlay._cssBound);
 
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
         VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
 
     },
@@ -207,7 +259,7 @@ VideoOverlay = {
         VideoOverlay._cssVideo.position = "auto";
         VideoOverlay.$video.css(VideoOverlay._cssVideo);
     },
-    requestFullScreen: function (element, isExitFullscreen) {
+    elementFullScreen: function (element, isExitFullscreen) {
         if (isExitFullscreen == true) {
             // Supports most browsers and their versions.
             var requestMethod =
@@ -260,15 +312,15 @@ VideoOverlay = {
                 height: "100%",
                 zIndex: cssOrigin.zIndex
             });
-
-            VideoOverlay.requestFullScreen(document.documentElement);
+            
+            VideoOverlay.elementFullScreen(document.documentElement);
             VideoOverlay._isFullscreen = true;
+
         } else {
             $obj.css(cssOrigin);
-
+            VideoOverlay.elementFullScreen(document.documentElement, true);
+            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
             VideoOverlay._isFullscreen = false;
-
-            VideoOverlay.requestFullScreen(document.documentElement, true);
         }
     }
 };
