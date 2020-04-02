@@ -1,5 +1,6 @@
 <div>
     Here is overlay with channel id = {{$c}}
+    <div>{!!json_encode($data)!!}</div>
     <div id='innerDivMsg'></div>
     <div>
     <input id="txtMessageReply"><button  onclick="txtInner_sendMsg('txtMessageReply')">Send</button>

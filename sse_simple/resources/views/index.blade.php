@@ -83,7 +83,7 @@
 
                 VideoOverlay.changeOverlayPosition(e.data);
 
-                VideoOverlay.loadOverlayContent(e.data.url);
+                VideoOverlay.loadOverlayContent(e.data.url,e.data);
             };
 
             myWorker.start();
