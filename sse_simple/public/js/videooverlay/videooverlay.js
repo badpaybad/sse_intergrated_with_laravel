@@ -1,33 +1,37 @@
-VideoOverlay = {
-    _videoId: null,
-    $video: null,
-    $overlayBound: null,
-    $overlay: null,
-    _isFullscreen: false,
-    _currentUrl: null,
-    _cssBound: null,
-    _cssVideo: null,
-    _cssOverlay: null,
-    _cssOverlayFov: null,
-    init: function (domId) {
-        VideoOverlay._videoId = domId;
-        VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
+VideoOverlay = function (videoDomId) {
 
-        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
-        if (VideoOverlay.$overlay) {
-            VideoOverlay.$overlay.remove();
+    var _this = this;
+    this._videoId = null;
+    this.$video = null;
+    this.$overlayBound = null;
+    this.$overlay = null;
+    this._isFullscreen = false;
+    this._currentUrl = null;
+    this._cssBound = null;
+    this._cssVideo = null;
+    this._cssOverlay = null;
+    this._cssOverlayFov = null;
+
+    this._videoId = videoDomId;
+
+    this.init = function () {
+        _this.$video = jQuery("#" + _this._videoId);
+
+        _this.$overlayBound = jQuery("#videoOverlayBound");
+        _this.$overlay = jQuery("#videoOverlay");
+        if (_this.$overlay) {
+            _this.$overlay.remove();
         }
-        if (VideoOverlay.$overlayBound) {
-            VideoOverlay.$video.unwrap();
+        if (_this.$overlayBound) {
+            _this.$video.unwrap();
         }
+        _this.escKeyPress(document);
+        _this.escKeyPress(window);
 
-        VideoOverlay.escKeyPress(document);
-        VideoOverlay.escKeyPress(window);
+        _this.escKeyPress(_this.$video);
+    };
 
-        VideoOverlay.escKeyPress(VideoOverlay.$video);
-    },
-    escKeyPress: function (element) {
+    this.escKeyPress = function (element) {
         $(element).keyup(function (e) {
 
             var isEscPress = false;
@@ -37,188 +41,197 @@ VideoOverlay = {
                 isEscPress = true;
             }
             if (isEscPress) {
-                VideoOverlay._isFullscreen = false;
+                _this._isFullscreen = false;
 
-                VideoOverlay.requestFullscreen(false);
+                _this.requestFullscreen(false);
             }
         });
-    },
-    hideOverlay: function () {
-        if (VideoOverlay.$overlay) {
-            VideoOverlay._cssOverlay.display = "none";
-            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+    };
+
+    this.hideOverlay = function () {
+        if (_this.$overlay) {
+            _this._cssOverlay.display = "none";
+            _this.$overlay.css(_this._cssOverlay);
         }
-    },
-    showOverlay: function () {
-        if (VideoOverlay.$overlay) {
-            VideoOverlay._cssOverlay.display = "block";
-            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+    };
+
+    this.showOverlay = function () {
+        if (_this.$overlay) {
+            _this._cssOverlay.display = "block";
+            _this.$overlay.css(_this._cssOverlay);
         }
-    },
-    changeOverlayPosition: function (data) {
+    };
+
+    this.changeOverlayPosition = function (data) {
         if (!data) return;
         if (!data.position) return;
 
         if (data.opacity) {
-            VideoOverlay._cssOverlay.opacity = data.opacity;
+            _this._cssOverlay.opacity = data.opacity;
         }
 
         if (data.show || data.show == 'true') {
-            VideoOverlay._cssOverlay.display = 'block';
+            _this._cssOverlay.display = 'block';
         }
         else {
-            VideoOverlay._cssOverlay.display = 'none';
+            _this._cssOverlay.display = 'none';
         }
         if (data.position == 'fullscreen') {
-            VideoOverlay._cssOverlay.top = 0;
-            VideoOverlay._cssOverlay.left = 0;
-            VideoOverlay._cssOverlay.width = '100%';
-            VideoOverlay._cssOverlay.height = '100%';
+            _this._cssOverlay.top = 0;
+            _this._cssOverlay.left = 0;
+            _this._cssOverlay.width = '100%';
+            _this._cssOverlay.height = '100%';
         }
         if (data.position == 'top') {
-            VideoOverlay._cssOverlay.top = 0;
-            VideoOverlay._cssOverlay.left = 0;
-            VideoOverlay._cssOverlay.width = '100%';
-            VideoOverlay._cssOverlay.height = '50%';
+            _this._cssOverlay.top = 0;
+            _this._cssOverlay.left = 0;
+            _this._cssOverlay.width = '100%';
+            _this._cssOverlay.height = '50%';
         }
         if (data.position == 'right') {
-            VideoOverlay._cssOverlay.top = 0;
-            VideoOverlay._cssOverlay.right = 0;
-            VideoOverlay._cssOverlay.width = '50%';
-            VideoOverlay._cssOverlay.height = '100%';
+            _this._cssOverlay.top = 0;
+            _this._cssOverlay.right = 0;
+            _this._cssOverlay.width = '50%';
+            _this._cssOverlay.height = '100%';
         }
         if (data.position == 'bottom') {
-            VideoOverlay._cssOverlay.bottom = 0;
-            VideoOverlay._cssOverlay.left = 0;
-            VideoOverlay._cssOverlay.width = '100%';
-            VideoOverlay._cssOverlay.height = '50%';
+            _this._cssOverlay.bottom = 0;
+            _this._cssOverlay.left = 0;
+            _this._cssOverlay.width = '100%';
+            _this._cssOverlay.height = '50%';
         }
         if (data.position == 'left') {
-            VideoOverlay._cssOverlay.top = 0;
-            VideoOverlay._cssOverlay.left = 0;
-            VideoOverlay._cssOverlay.width = '50%';
-            VideoOverlay._cssOverlay.height = '100%';
+            _this._cssOverlay.top = 0;
+            _this._cssOverlay.left = 0;
+            _this._cssOverlay.width = '50%';
+            _this._cssOverlay.height = '100%';
         }
 
-        VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+        _this.$overlay.css(_this._cssOverlay);
 
-        if (VideoOverlay._isFullscreen == true) {
+        if (_this._isFullscreen == true) {
 
-            VideoOverlay.overlayFullscreen(true);
+            _this.overlayFullscreen(true);
         }
 
-    },
-    loadOverlayContent: function (url, data) {
-        if (url) VideoOverlay._currentUrl = url;
+    };
+
+    this.loadOverlayContent = function (url, data, transformResponse) {
+        if (url) _this._currentUrl = url;
 
         jQuery.post(
-            VideoOverlay._currentUrl,
+            _this._currentUrl,
             {
                 //csrf: '{{ csrf_token() }}',
                 //c: channelName,
                 data: data
             },
             function (response) {
-                VideoOverlay.$overlay.html(
-                    response +
-                    ' <button onclick="VideoPlayer.screenNormal()">Exit fullscreen</button>' +
-                    "</div>"
-                );
+
+                var transformed= response;
+                if(transformResponse){
+                    transformed=transformResponse(response);
+                }
+
+                _this.$overlay.html(transformed);                   
             }
         );
-    },
-    requestFullscreen: function (fullscreen) {
+    };
+
+    this.requestFullscreen = function (fullscreen) {
         if (fullscreen == null || fullscreen == "undefined") {
-            fullscreen = VideoOverlay._isFullscreen;
+            fullscreen = _this._isFullscreen;
         }
 
-        VideoOverlay.domFullscreen(
-            VideoOverlay.$video,
+        _this.domFullscreen(
+            _this.$video,
             fullscreen,
-            VideoOverlay._cssVideo
+            _this._cssVideo
         );
-        VideoOverlay.domFullscreen(
-            VideoOverlay.$overlayBound,
+        _this.domFullscreen(
+            _this.$overlayBound,
             fullscreen,
-            VideoOverlay._cssBound
+            _this._cssBound
         );
 
-        VideoOverlay.overlayFullscreen(fullscreen);
+        _this.overlayFullscreen(fullscreen);
 
-        VideoOverlay._isFullscreen = fullscreen;
+        _this._isFullscreen = fullscreen;
 
-    },
-    overlayFullscreen: function (fullscreen) {
+    };
+
+    this.overlayFullscreen = function (fullscreen) {
         if (fullscreen == true) {
 
-            VideoOverlay._cssOverlayFov = { position: "fixed" };
+            _this._cssOverlayFov = { position: "fixed" };
 
-            if (VideoOverlay._cssOverlay.top)
-                VideoOverlay._cssOverlayFov.top = VideoOverlay._cssOverlay.top;
+            if (_this._cssOverlay.top)
+                _this._cssOverlayFov.top = _this._cssOverlay.top;
 
-            if (VideoOverlay._cssOverlay.right)
-                VideoOverlay._cssOverlayFov.right = VideoOverlay._cssOverlay.right;
+            if (_this._cssOverlay.right)
+                _this._cssOverlayFov.right = _this._cssOverlay.right;
 
-            if (VideoOverlay._cssOverlay.bottom)
-                VideoOverlay._cssOverlayFov.bottom = VideoOverlay._cssOverlay.bottom;
+            if (_this._cssOverlay.bottom)
+                _this._cssOverlayFov.bottom = _this._cssOverlay.bottom;
 
-            if (VideoOverlay._cssOverlay.left)
-                VideoOverlay._cssOverlayFov.left = VideoOverlay._cssOverlay.left;
+            if (_this._cssOverlay.left)
+                _this._cssOverlayFov.left = _this._cssOverlay.left;
 
-            if (VideoOverlay._cssOverlay.width)
-                VideoOverlay._cssOverlayFov.width = VideoOverlay._cssOverlay.width;
+            if (_this._cssOverlay.width)
+                _this._cssOverlayFov.width = _this._cssOverlay.width;
 
-            if (VideoOverlay._cssOverlay.height)
-                VideoOverlay._cssOverlayFov.height = VideoOverlay._cssOverlay.height;
+            if (_this._cssOverlay.height)
+                _this._cssOverlayFov.height = _this._cssOverlay.height;
 
-            if (VideoOverlay._cssOverlay.display)
-                VideoOverlay._cssOverlayFov.display = VideoOverlay._cssOverlay.display;
+            if (_this._cssOverlay.display)
+                _this._cssOverlayFov.display = _this._cssOverlay.display;
 
-            if (VideoOverlay._cssOverlay.opacity)
-                VideoOverlay._cssOverlayFov.opacity = VideoOverlay._cssOverlay.opacity;
+            if (_this._cssOverlay.opacity)
+                _this._cssOverlayFov.opacity = _this._cssOverlay.opacity;
 
-            VideoOverlay.$overlay.css(VideoOverlay._cssOverlayFov);
+            _this.$overlay.css(_this._cssOverlayFov);
 
         } else {
-            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+            _this.$overlay.css(_this._cssOverlay);
         }
-    },
-    initOverlay: function () {
+    };
 
-        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
+    this.initOverlay = function () {
 
-        if (VideoOverlay.$overlay && VideoOverlay.$overlay.id == "videoOverlay") {
-            VideoOverlay.$overlay.remove();
+        _this.$overlayBound = jQuery("#videoOverlayBound");
+        _this.$overlay = jQuery("#videoOverlay");
+
+        if (_this.$overlay && _this.$overlay.id == "videoOverlay") {
+            _this.$overlay.remove();
         }
-        if (VideoOverlay.$overlayBound && VideoOverlay.$overlayBound.id == 'videoOverlayBound') {
-            VideoOverlay.$video.unwrap();
+        if (_this.$overlayBound && _this.$overlayBound.id == 'videoOverlayBound') {
+            _this.$video.unwrap();
         }
 
-        VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
-        VideoOverlay.$video.wrap("<div id='videoOverlayBound'></div>");
-        VideoOverlay.$video.before("<div id='videoOverlay'></div>");
+        _this.$video = jQuery("#" + _this._videoId);
+        _this.$video.wrap("<div id='videoOverlayBound'></div>");
+        _this.$video.before("<div id='videoOverlay'></div>");
 
-        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
+        _this.$overlayBound = jQuery("#videoOverlayBound");
+        _this.$overlay = jQuery("#videoOverlay");
 
-        VideoOverlay._cssVideo = {
+        _this._cssVideo = {
             position: "absolute",
             top: 0,
             left: 0,
-            width: VideoOverlay.$video.width(),
-            height: VideoOverlay.$video.height(),
+            width: _this.$video.width(),
+            height: _this.$video.height(),
             zIndex: 9999
         };
-        VideoOverlay._cssBound = {
+        _this._cssBound = {
             position: "relative",
-            width: VideoOverlay.$video.width(),
-            height: VideoOverlay.$video.height(),
+            width: _this.$video.width(),
+            height: _this.$video.height(),
             border: "",
             zIndex: 999,
             overflow: 'hidden'
         };
-        VideoOverlay._cssOverlay = {
+        _this._cssOverlay = {
             position: "absolute",
             top: 0,
             right: 0,
@@ -233,7 +246,7 @@ VideoOverlay = {
             border: "",
             color: '#cccccc'
         };
-        VideoOverlay._cssOverlayFov = {
+        _this._cssOverlayFov = {
             position: "fixed",
             top: 0,
             right: 0,
@@ -248,28 +261,30 @@ VideoOverlay = {
             border: "",
             color: '#cccccc'
         };
-        VideoOverlay.$video.css(VideoOverlay._cssVideo);
 
-        VideoOverlay.$overlayBound.css(VideoOverlay._cssBound);
+        _this.$video.css(_this._cssVideo);
 
-        VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
+        _this.$overlayBound.css(_this._cssBound);
 
-    },
-    removeOverlay: function () {
-        VideoOverlay.$overlayBound = jQuery("#videoOverlayBound");
-        VideoOverlay.$overlay = jQuery("#videoOverlay");
+        _this.$overlay.css(_this._cssOverlay);
+    };
+
+    this.removeOverlay = function () {
+        _this.$overlayBound = jQuery("#videoOverlayBound");
+        _this.$overlay = jQuery("#videoOverlay");
 
         if ($overlay) {
-            VideoOverlay.$overlay.remove();
+            _this.$overlay.remove();
         }
         if ($overlayBound) {
-            VideoOverlay.$video.unwrap();
+            _this.$video.unwrap();
         }
-        VideoOverlay.$video.attr("style", "");
-        VideoOverlay._cssVideo.position = "auto";
-        VideoOverlay.$video.css(VideoOverlay._cssVideo);
-    },
-    elementFullScreen: function (element, isExitFullscreen) {
+        _this.$video.attr("style", "");
+        _this._cssVideo.position = "auto";
+        _this.$video.css(_this._cssVideo);
+    };
+
+    this.elementFullScreen = function (element, isExitFullscreen) {
         if (isExitFullscreen == true) {
             // Supports most browsers and their versions.
             var requestMethod =
@@ -309,9 +324,10 @@ VideoOverlay = {
                 }
             }
         }
-    },
-    domFullscreen: function ($obj, fullscreen, cssOrigin) {
-        if (fullscreen == true && VideoOverlay._isFullscreen == false) {
+    };
+
+    this.domFullscreen = function ($obj, fullscreen, cssOrigin) {
+        if (fullscreen == true && _this._isFullscreen == false) {
             $obj.css({
                 position: "fixed",
                 top: 0,
@@ -323,113 +339,18 @@ VideoOverlay = {
                 zIndex: cssOrigin.zIndex
             });
 
-            VideoOverlay.elementFullScreen(document.documentElement);
-            VideoOverlay._isFullscreen = true;
+            _this.elementFullScreen(document.documentElement);
+            _this._isFullscreen = true;
 
         } else {
             $obj.css(cssOrigin);
-            VideoOverlay.elementFullScreen(document.documentElement, true);
-            VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
-            VideoOverlay._isFullscreen = false;
+            _this.elementFullScreen(document.documentElement, true);
+            _this.$overlay.css(_this._cssOverlay);
+            _this._isFullscreen = false;
         }
     }
-};
 
-VideoPlayer = {
-    _videoId: null,
-    $video: null,
-    _videoFullScreen: false,
-    _onFullScreenCallback: null,
-    init: function (videoId, onFullScreenCallback) {
-        VideoPlayer._videoId = videoId;
-        VideoPlayer.$video = document.getElementById(videoId);
-        VideoPlayer.$video.controls = false;
-
-        VideoPlayer._onFullScreenCallback = onFullScreenCallback;
-        VideoPlayer.play();
-
-        VideoPlayer.escKeyPress(document);
-        VideoPlayer.escKeyPress(window);
-        VideoPlayer.escKeyPress(VideoPlayer.$video);
-    },
-    onFullScreen: function (fullscreen) {
-        alert(fullscreen == true ? "fullscreen mode" : "normal mode");
-        if (VideoPlayer._onFullScreenCallback) {
-            VideoPlayer._onFullScreenCallback(fullscreen);
-        }
-    },
-    play: function () {
-        var vid = VideoPlayer.$video;
-        if (vid.paused) {
-            vid.play();
-        }
-    },
-    pause: function () {
-        var vid = VideoPlayer.$video;
-        if (!vid.paused) {
-            vid.pause();
-        }
-    },
-    screenFull: function () {
-        if (VideoPlayer._videoFullScreen == true) return;
-
-        VideoPlayer._videoFullScreen = true;
-        VideoPlayer.domFullscreen(VideoPlayer.$video, true, {
-            position: "absolute",
-            top: 0,
-            width: 480,
-            height: 360,
-            left: 0,
-            zIndex: 999
-        });
-    },
-    screenNormal: function () {
-        if (VideoPlayer._videoFullScreen == false) return;
-
-        VideoPlayer._videoFullScreen = false;
-        VideoPlayer.domFullscreen(VideoPlayer.$video, false, {
-            position: "absolute",
-            top: 0,
-            width: 480,
-            height: 360,
-            left: 0,
-            zIndex: 999
-        });
-    },
-    domFullscreen: function ($obj, fullscreen, cssOrigin) {
-        $obj = jQuery($obj);
-        if (fullscreen) {
-            $obj.css({
-                position: "fixed",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                zIndex: cssOrigin.zIndex
-            });
-
-            VideoPlayer.onFullScreen(true);
-        } else {
-            $obj.css(cssOrigin);
-
-            VideoPlayer.onFullScreen(false);
-        }
-    },
-    escKeyPress: function (element) {
-        $(element).keyup(function (e) {
-
-            var isEscPress = false;
-            var key = e.which || event.key || event.keyCode;
-
-            if (key == 27 || key == 'Esc' || key == "Escape") {
-                isEscPress = true;
-            }
-            if (isEscPress) {
-                VideoPlayer.screenNormal();
-                VideoPlayer._videoFullScreen = false;
-            }
-        });
-    }
+    this.init(videoDomId);
+    this.initOverlay();
+    return this;
 };

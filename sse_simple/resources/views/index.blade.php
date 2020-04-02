@@ -6,74 +6,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, minimal-ui">
     <meta name='csrf' content="{{ csrf_token() }}">
     <title>Laravel</title>
-<style>
+    <style>
+        :-webkit-full-screen body,
+        :-moz-full-screen body,
+        :-ms-fullscreen body {
+            /* properties */
+            width: 100vw;
+            height: 100vh;
+        }
 
-:-webkit-full-screen body,
-:-moz-full-screen body,
-:-ms-fullscreen body {
-	/* properties */
-	width: 100vw;
-	height: 100vh;
-}
+        :full-screen body {
+            /*pre-spec */
+            /* properties */
+            width: 100vw;
+            height: 100vh;
+        }
 
-:full-screen body {
-	/*pre-spec */
-	/* properties */
-	width: 100vw;
-	height: 100vh;
-}
+        :fullscreen body {
+            /* spec */
+            /* properties */
+            width: 100vw;
+            height: 100vh;
+        }
 
-:fullscreen body {
-	/* spec */
-	/* properties */
-	width: 100vw;
-	height: 100vh;
-}
+        /* deeper elements */
 
-/* deeper elements */
+        :-webkit-full-screen body {
+            width: 100vw;
+            height: 100vh;
+        }
 
-:-webkit-full-screen body {
-	width: 100vw;
-	height: 100vh;
-}
+        /* styling the backdrop*/
 
-/* styling the backdrop*/
+        ::backdrop,
+        ::-ms-backdrop {
+            /* Custom styles */
+        }
 
-::backdrop,
-::-ms-backdrop {
-	/* Custom styles */
-}
-button {
-    margin: 5px;
-}
-</style>
+        button {
+            margin: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="flex-center position-ref full-height">
         <h1>Simple SSE</h1>
         <div>
-            <div >
+            <div>
                 <!-- <video id="video1">
                     <source src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
                     <audio src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"></audio>
                 </video> -->
-                <iframe id="video" width="480" height="360" 
-                src="https://www.youtube.com/embed/coZxG824aUE" frameborder="0" 
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                webkitAllowFullScreen="yes" allowfullscreen="yes" mozallowfullscreen="yes"
-                allowvr="yes"></iframe>
-                
+                <iframe id="video" width="480" height="360" src="https://www.youtube.com/embed/coZxG824aUE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" webkitAllowFullScreen="yes" allowfullscreen="yes" mozallowfullscreen="yes" allowvr="yes"></iframe>
+
             </div>
             <div>
-                <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
-                <button onclick="VideoPlayer.play()">Play</button>
-                <button onclick="VideoPlayer.pause()">Pause</button>
+                <button onclick="_videoPlayer.screenFull()">Fullscreen</button>
+                <button onclick="_videoPlayer.play()">Play</button>
+                <button onclick="_videoPlayer.pause()">Pause</button>
             </div>
             <div>
-                <button onclick="VideoOverlay.hideOverlay()">Hide overlay</button>
-                <button onclick="VideoOverlay.showOverlay();">Show overlay</button>                
-                <button onclick="VideoOverlay.loadOverlayContent('/videooverlay');">Load content overlay</button>
+                <button onclick="_videoOverlay.hideOverlay()">Hide overlay</button>
+                <button onclick="_videoOverlay.showOverlay();">Show overlay</button>
             </div>
         </div>
         <div>
@@ -90,17 +85,19 @@ button {
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
-    <script src="/js/videooverlay/videooverlay.js"></script>
-    <script src="/js/webpushnotification/WebWorkerReceiver.js"></script>
+    <script src="/js/videooverlay/VideoOverlay.js"></script>
+    <script src="/js/videooverlay/VideoPlayer.js"></script>
+    <script src="/js/webpushnotification/WebWorkerWrapper.js"></script>
     <script>
-        VideoOverlay.init('video');
+        var _videoOverlay = new VideoOverlay('video');
 
-        VideoOverlay.initOverlay();
+        _videoOverlay.loadOverlayContent('/videooverlay', null, function(response) {
+            return response +
+                '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
+        }); //load content inside overlay in page load
 
-        VideoOverlay.loadOverlayContent('/videooverlay');//load content inside overlay in page load
-
-        VideoPlayer.init('video', function(fullscreen) {
-            VideoOverlay.requestFullscreen(fullscreen);
+        var _videoPlayer = new VideoPlayer('video', function(fullscreen) {
+            _videoOverlay.requestFullscreen(fullscreen);
         });
     </script>
     <script>
@@ -112,27 +109,30 @@ button {
     </script>
     <script>
         var channelName = 'test'; //you channel to listener
-        var typeOfWorker= typeof(SharedWorker)?'SharedWorker': 'Worker';
+        var typeOfWorker = typeof(SharedWorker) ? 'SharedWorker' : 'Worker';
 
         var subscriberName = 'test'; //should be the same to channelName and 1st character should not begin with number.
-        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t='+typeOfWorker+'&c=' + channelName + '&s=' + subscriberName +
+        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t=' + typeOfWorker + '&c=' + channelName + '&s=' + subscriberName +
             '&token=' + encodeURIComponent('<?php echo \Auth::getSession()->getId() ?>');
 
-            var myWorker=new WebWorkerReceiver(swUrl,typeOfWorker);
+        var myWorker = new WebWorkerWrapper(swUrl, typeOfWorker);
 
-            myWorker.onmessage=function(e) {
-                console.log(e);
-                //todo: do with your logic
-                var msgs = jQuery("#messages").html();
-                msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
-                jQuery("#messages").html(msgs + '<div>');
+        myWorker.onmessage = function(e) {
+            console.log(e);
+            //todo: do with your logic
+            var msgs = jQuery("#messages").html();
+            msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
+            jQuery("#messages").html(msgs + '<div>');
 
-                VideoOverlay.changeOverlayPosition(e.data);
+            _videoOverlay.changeOverlayPosition(e.data);
 
-                VideoOverlay.loadOverlayContent(e.data.url,e.data);
-            };
+            _videoOverlay.loadOverlayContent(e.data.url, e.data, function(response) {
+                return response +
+                    '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
+            });
+        };
 
-            myWorker.start();
+        myWorker.start();
 
         function txtMessage_sendMsg(txtMessage) {
             //call to server side to post msg to other

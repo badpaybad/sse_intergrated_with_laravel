@@ -1,4 +1,4 @@
-WebWorkerReceiver = function (urlJsHanle, typeOfWorker) {
+WebWorkerWrapper = function (urlJsHanle, typeOfWorker) {
 
     this.isMobile = function () {
         var isMobile = false; //initiate as false
@@ -10,10 +10,10 @@ WebWorkerReceiver = function (urlJsHanle, typeOfWorker) {
         return isMobile;
     }
 
-    _this = this;
+    var _this = this;
 
     this.typeOfWorker = "Worker";
-    this.urlJsHanle = urlJsHanle;    
+    this.urlJsHanle = urlJsHanle;
     this._currentWorker = null;
     this._isSharedWorker = false;
     this._allPortOpenedByTap = [];
@@ -38,7 +38,7 @@ WebWorkerReceiver = function (urlJsHanle, typeOfWorker) {
     } else {
         this._currentWorker = new Worker(this.urlJsHanle);
     }
-    
+
     this.start = function (onmessage) {
         if (onmessage) _this.onmessage = onmessage;
 
@@ -55,7 +55,8 @@ WebWorkerReceiver = function (urlJsHanle, typeOfWorker) {
 
             console.log('Worker started')
         }
+        return _this;
     }
 
-
+    return this;
 };
