@@ -3,10 +3,50 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, minimal-ui">
     <meta name='csrf' content="{{ csrf_token() }}">
     <title>Laravel</title>
+<style>
 
+:-webkit-full-screen body,
+:-moz-full-screen body,
+:-ms-fullscreen body {
+	/* properties */
+	width: 100vw;
+	height: 100vh;
+}
+
+:full-screen body {
+	/*pre-spec */
+	/* properties */
+	width: 100vw;
+	height: 100vh;
+}
+
+:fullscreen body {
+	/* spec */
+	/* properties */
+	width: 100vw;
+	height: 100vh;
+}
+
+/* deeper elements */
+
+:-webkit-full-screen body {
+	width: 100vw;
+	height: 100vh;
+}
+
+/* styling the backdrop*/
+
+::backdrop,
+::-ms-backdrop {
+	/* Custom styles */
+}
+button {
+    margin: 5px;
+}
+</style>
 </head>
 
 <body>
@@ -18,7 +58,11 @@
                     <source src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
                     <audio src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"></audio>
                 </video> -->
-                <iframe id="video" width="360" height="240" src="https://www.youtube.com/embed/coZxG824aUE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="video" width="480" height="360" 
+                src="https://www.youtube.com/embed/coZxG824aUE" frameborder="0" 
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                webkitAllowFullScreen="yes" allowfullscreen="yes" mozallowfullscreen="yes"
+                allowvr="yes"></iframe>
                 
             </div>
             <div>
