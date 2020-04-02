@@ -12,15 +12,14 @@
 <body>
     <div class="flex-center position-ref full-height">
         <h1>Simple SSE</h1>
-        <div >
+        <div>
             <div>
                 <!-- <video id="video1">
                     <source src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" type="video/mp4">
                     <audio src="https://file-examples.com/wp-content/uploads/2017/04/file_example_MP4_480_1_5MG.mp4"></audio>
                 </video> -->
 
-                <iframe id="video" width="475" height="292" src="https://www.youtube.com/embed/opSTMWHPuI4"
-                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="video" width="475" height="292" src="https://www.youtube.com/embed/opSTMWHPuI4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
             <div>
                 <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
@@ -31,12 +30,12 @@
                 <button onclick="VideoOverlay.showOverlay();VideoOverlay.loadOverlayContent('/videooverlay');">Show content overlay</button>
             </div>
         </div>
-        <div >
+        <div>
             <fieldset>
                 <legend>Your message(s)</legend>
                 <div id="messages"></div>
                 <div>
-                <i>Send message to load content over video</i><br>
+                    <i>Send message to load content over video</i><br>
                     <input id="txtMessage" onkeyup="txtMessage_onKeyup(this,event)"><button id="btnMessage" onclick="txtMessage_sendMsg('txtMessage')">Send</button>
                 </div>
             </fieldset>
@@ -46,6 +45,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script src="/js/videooverlay/videooverlay.js"></script>
+    <script src="/js/webpushnotification/WebWorkerCustom.js"></script>
     <script>
         VideoOverlay.init('video');
 
@@ -66,24 +66,46 @@
     </script>
     <script>
         var channelName = 'test'; //you channel to listener
+        var typeOfWorker= typeof(SharedWorker)?'Worker': 'SharedWorker';
+        
         var subscriberName = 'test'; //should be the same to channelName and 1st character should not begin with number.
-        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?c=' + channelName + '&s=' + subscriberName +
+        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t='+typeOfWorker+'&c=' + channelName + '&s=' + subscriberName +
             '&token=' + encodeURIComponent('<?php echo \Auth::getSession()->getId() ?>');
 
-        var myWorker = new SharedWorker(swUrl);
-        myWorker.port.onmessage = function(e) {
-            console.log(e);
-            //todo: do with your logic
-            var msgs = jQuery("#messages").html();
-            msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
-            jQuery("#messages").html(msgs+'<div>');
+        if (typeOfWorker=='SharedWorker') {
+            var myWorker = new SharedWorker(swUrl);
 
-            VideoOverlay.changeOverlayPosition(e.data);
+            myWorker.port.onmessage = function(e) {
+                console.log(e);
+                //todo: do with your logic
+                var msgs = jQuery("#messages").html();
+                msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
+                jQuery("#messages").html(msgs + '<div>');
 
-            VideoOverlay.loadOverlayContent(e.data.url);
-        };
+                VideoOverlay.changeOverlayPosition(e.data);
 
-        myWorker.port.start();
+                VideoOverlay.loadOverlayContent(e.data.url);
+            };
+
+            myWorker.port.start();
+        }
+       else if (typeof(Worker)) {
+
+            var myWorker = new Worker(swUrl);
+
+            myWorker.onmessage = function(e) {
+                console.log(e);
+                //todo: do with your logic
+                var msgs = jQuery("#messages").html();
+                msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
+                jQuery("#messages").html(msgs + '<div>');
+
+                VideoOverlay.changeOverlayPosition(e.data);
+
+                VideoOverlay.loadOverlayContent(e.data.url);
+            };
+
+        }
 
         function txtMessage_sendMsg(txtMessage) {
             //call to server side to post msg to other
@@ -91,7 +113,7 @@
             jQuery.post(url, {
                 csrf: '{{ csrf_token() }}',
                 c: channelName,
-                msg: jQuery('#'+txtMessage).val()
+                msg: jQuery('#' + txtMessage).val()
             }, function(response) {
                 // no need call other ajax call to reload new data into #messages
             }, "json");
