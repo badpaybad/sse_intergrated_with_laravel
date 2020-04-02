@@ -69,7 +69,12 @@ VideoOverlay = {
         else {
             VideoOverlay._cssOverlay.display = 'none';
         }
-
+        if (data.position == 'fullscreen') {
+            VideoOverlay._cssOverlay.top = 0;
+            VideoOverlay._cssOverlay.left = 0;
+            VideoOverlay._cssOverlay.width = '100%';
+            VideoOverlay._cssOverlay.height = '100%';
+        }
         if (data.position == 'top') {
             VideoOverlay._cssOverlay.top = 0;
             VideoOverlay._cssOverlay.left = 0;
@@ -94,6 +99,7 @@ VideoOverlay = {
             VideoOverlay._cssOverlay.width = '50%';
             VideoOverlay._cssOverlay.height = '100%';
         }
+        
         VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
 
         if(VideoOverlay._isFullscreen==true){
