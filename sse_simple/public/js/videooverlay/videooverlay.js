@@ -8,7 +8,7 @@ VideoOverlay = {
     _cssBound: null,
     _cssVideo: null,
     _cssOverlay: null,
-    _cssOverlayFov:null,
+    _cssOverlayFov: null,
     init: function (domId) {
         VideoOverlay._videoId = domId;
         VideoOverlay.$video = jQuery("#" + VideoOverlay._videoId);
@@ -99,17 +99,17 @@ VideoOverlay = {
             VideoOverlay._cssOverlay.width = '50%';
             VideoOverlay._cssOverlay.height = '100%';
         }
-        
+
         VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
 
-        if(VideoOverlay._isFullscreen==true){
-            
+        if (VideoOverlay._isFullscreen == true) {
+
             VideoOverlay.overlayFullscreen(true);
         }
 
     },
     loadOverlayContent: function (url, data) {
-        VideoOverlay._currentUrl = url;
+        if (url) VideoOverlay._currentUrl = url;
 
         jQuery.post(
             VideoOverlay._currentUrl,
@@ -145,12 +145,12 @@ VideoOverlay = {
 
         VideoOverlay.overlayFullscreen(fullscreen);
 
-        VideoOverlay._isFullscreen= fullscreen;        
+        VideoOverlay._isFullscreen = fullscreen;
 
     },
-    overlayFullscreen:function(fullscreen){
-        if(fullscreen==true){
-            
+    overlayFullscreen: function (fullscreen) {
+        if (fullscreen == true) {
+
             VideoOverlay._cssOverlayFov = { position: "fixed" };
 
             if (VideoOverlay._cssOverlay.top)
@@ -167,7 +167,7 @@ VideoOverlay = {
 
             if (VideoOverlay._cssOverlay.width)
                 VideoOverlay._cssOverlayFov.width = VideoOverlay._cssOverlay.width;
-                
+
             if (VideoOverlay._cssOverlay.height)
                 VideoOverlay._cssOverlayFov.height = VideoOverlay._cssOverlay.height;
 
@@ -179,7 +179,7 @@ VideoOverlay = {
 
             VideoOverlay.$overlay.css(VideoOverlay._cssOverlayFov);
 
-        }else{
+        } else {
             VideoOverlay.$overlay.css(VideoOverlay._cssOverlay);
         }
     },
@@ -231,7 +231,7 @@ VideoOverlay = {
             backgroundColor: "black",
             overflow: 'auto',
             border: "",
-            color:'#cccccc'
+            color: '#cccccc'
         };
         VideoOverlay._cssOverlayFov = {
             position: "fixed",
@@ -243,10 +243,10 @@ VideoOverlay = {
             zIndex: 99999,
             opacity: "0.5",
             display: "block",
-            backgroundColor: "black",            
+            backgroundColor: "black",
             overflow: 'auto',
             border: "",
-            color:'#cccccc'
+            color: '#cccccc'
         };
         VideoOverlay.$video.css(VideoOverlay._cssVideo);
 
@@ -322,7 +322,7 @@ VideoOverlay = {
                 height: "100%",
                 zIndex: cssOrigin.zIndex
             });
-            
+
             VideoOverlay.elementFullScreen(document.documentElement);
             VideoOverlay._isFullscreen = true;
 

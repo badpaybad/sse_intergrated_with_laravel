@@ -25,9 +25,11 @@
                 <button onclick="VideoPlayer.screenFull()">Fullscreen</button>
                 <button onclick="VideoPlayer.play()">Play</button>
                 <button onclick="VideoPlayer.pause()">Pause</button>
-
+            </div>
+            <div>
                 <button onclick="VideoOverlay.hideOverlay()">Hide overlay</button>
-                <button onclick="VideoOverlay.showOverlay();VideoOverlay.loadOverlayContent('/videooverlay');">Show content overlay</button>
+                <button onclick="VideoOverlay.showOverlay();">Show overlay</button>                
+                <button onclick="VideoOverlay.loadOverlayContent('/videooverlay');">Load content overlay</button>
             </div>
         </div>
         <div>
