@@ -45,7 +45,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script src="/js/videooverlay/videooverlay.js"></script>
-    <script src="/js/webpushnotification/WebWorkerCustom.js"></script>
+    <script src="/js/webpushnotification/WebWorkerReceiver.js"></script>
     <script>
         VideoOverlay.init('video');
 
@@ -66,16 +66,15 @@
     </script>
     <script>
         var channelName = 'test'; //you channel to listener
-        var typeOfWorker= typeof(SharedWorker)?'Worker': 'SharedWorker';
-        
+        var typeOfWorker= typeof(SharedWorker)?'SharedWorker': 'Worker';
+
         var subscriberName = 'test'; //should be the same to channelName and 1st character should not begin with number.
         const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t='+typeOfWorker+'&c=' + channelName + '&s=' + subscriberName +
             '&token=' + encodeURIComponent('<?php echo \Auth::getSession()->getId() ?>');
 
-        if (typeOfWorker=='SharedWorker') {
-            var myWorker = new SharedWorker(swUrl);
+            var myWorker=new WebWorkerReceiver(swUrl,typeOfWorker);
 
-            myWorker.port.onmessage = function(e) {
+            myWorker.onmessage=function(e) {
                 console.log(e);
                 //todo: do with your logic
                 var msgs = jQuery("#messages").html();
@@ -87,25 +86,7 @@
                 VideoOverlay.loadOverlayContent(e.data.url);
             };
 
-            myWorker.port.start();
-        }
-       else if (typeof(Worker)) {
-
-            var myWorker = new Worker(swUrl);
-
-            myWorker.onmessage = function(e) {
-                console.log(e);
-                //todo: do with your logic
-                var msgs = jQuery("#messages").html();
-                msgs = msgs + '<div>' + JSON.stringify(e.data) + '</div>';
-                jQuery("#messages").html(msgs + '<div>');
-
-                VideoOverlay.changeOverlayPosition(e.data);
-
-                VideoOverlay.loadOverlayContent(e.data.url);
-            };
-
-        }
+            myWorker.start();
 
         function txtMessage_sendMsg(txtMessage) {
             //call to server side to post msg to other
