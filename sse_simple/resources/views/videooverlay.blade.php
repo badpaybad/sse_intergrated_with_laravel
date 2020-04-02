@@ -1,9 +1,9 @@
 <div>
     Here is overlay with channel id = {{$c}}
     <div>{!!json_encode($data)!!}</div>
-    <div id='innerDivMsg'></div>
+    <div id='innerDivMsg'  onkeyup="txtMessage_onKeyup(this,event)"></div>
     <div>
-    <input id="txtMessageReply"><button  onclick="txtInner_sendMsg('txtMessageReply')">Send</button>
+    <input id="txtMessageReply"><button  onclick="txtMessage_sendMsg('txtMessageReply')">Send</button>
     </div>
 <script>
     txtInner_sendMsg=function(txtMessageReply){

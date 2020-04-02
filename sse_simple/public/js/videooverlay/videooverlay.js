@@ -121,7 +121,7 @@ VideoOverlay = {
             function (response) {
                 VideoOverlay.$overlay.html(
                     response +
-                    ' <button onclick="VideoPlayer.screenNormal()">Normal screen</button>' +
+                    ' <button onclick="VideoPlayer.screenNormal()">Exit fullscreen</button>' +
                     "</div>"
                 );
             }
@@ -228,8 +228,10 @@ VideoOverlay = {
             zIndex: 99999,
             opacity: "0.5",
             display: "block",
-            backgroundColor: "red",
-            overflow: 'auto'
+            backgroundColor: "black",
+            overflow: 'auto',
+            border: "",
+            color:'#cccccc'
         };
         VideoOverlay._cssOverlayFov = {
             position: "fixed",
@@ -241,8 +243,10 @@ VideoOverlay = {
             zIndex: 99999,
             opacity: "0.5",
             display: "block",
-            backgroundColor: "red",            
-            overflow: 'auto'
+            backgroundColor: "black",            
+            overflow: 'auto',
+            border: "",
+            color:'#cccccc'
         };
         VideoOverlay.$video.css(VideoOverlay._cssVideo);
 
