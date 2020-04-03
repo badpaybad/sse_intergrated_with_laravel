@@ -29,15 +29,14 @@ class ChannelController extends Controller
     public function admin(Request $request)
     {
         $all = $request->all();
-        $channelName = $all["c"];
-        $data= $this->redis->GetCache($channelName);
-        if(empty($data)){
-            $data=new stdClass;
-            $data->channelName="default";
-            $data->embeded="<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
-     
+        $channelName = @$all["c"];
+        $data = $this->redis->GetCache($channelName);
+        if (empty($data)) {
+            $data = new stdClass;
+            $data->channelName = "default";
+            $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
         }
-        return view('channel.admin',compact('data'));
+        return view('channel.admin', compact('data'));
     }
 
     public function create(Request $request)
@@ -45,12 +44,13 @@ class ChannelController extends Controller
         $all = $request->all();
         $channelName = $all["channelName"];
         $embeded = $all["embeded"];
+        
 
-        if(empty($channelName)|| empty($embeded)){
-            return json_encode(["channelName"=>"Not allow empty","embeded" => "Not allow empty"]);
+        if (empty($channelName) || empty($embeded)) {
+            return json_encode(["channelName" => "Not allow empty", "embeded" => "Not allow empty"]);
         }
 
-        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded]);
+        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded,'broadcastUrl'=>'channel/broadcast?c='.$channelName]);
         $this->redis->SetCache($channelName, $channelData);
 
         return $channelData;
@@ -59,53 +59,43 @@ class ChannelController extends Controller
     public function broadcast(Request $request)
     {
         $all = $request->all();
-        $channelName = $all["c"];
-        $data= $this->redis->GetCache($channelName);
-        if(empty($data)){
-            $data=new stdClass;
-            $data->channelName="default";
-            $data->embeded="<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+        $channelName = @$all["c"];
+        $data = $this->redis->GetCache($channelName);
+        if (empty($data)) {
+            $data = new stdClass;
+            $data->channelName = "default";
+            $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
         }
-        return view('channel.broadcast',compact('data'));
+        return view('channel.broadcast', compact('data'));
     }
-    public function overlaycontent(Request $request){
-        $overlayData= $this->redis->GetCache($channelName.":overlaydata");
 
-        if(!empty($overlayData)){
-            $overlayData= json_decode($overlayData);
-        }
-    }
     public function changeoverlaycontent(Request $request)
     {
         $request = $request->all();
-        $channelName = $request["c"];        
+        $channelName = @$request["c"];
         $show = $request["show"];
         $position = $request["position"];
         $url = $request["url"];
         $opacity = $request["opacity"];
         $method = $request["method"];
-      
 
-        $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
-
-        $this->sse->SendToChannel($channelName, json_encode(array(
+        $overlayData = json_encode(array(
             "channel" => $channelName, "datetime" => date('c'), "msg" => '',
             "show" => $show,
-            "position" =>$position,
+            "position" => $position,
             "url" => $url,
             "opacity" => $opacity,
             'show' => $show,
-            'method'=>$method
-        )));
+            'method' => $method
+        ));
+
+        $this->redis->GetCache($channelName . ":overlaydata", $overlayData);
+
+        $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
+        $this->sse->SendToChannel($channelName, $overlayData);
+
         return json_encode(array("sucess" => 1));
     }
 
-    public function videooverlay(Request $request)
-    {
-        $request = $request->all();
-        $data = @$request["data"];
-        $c = @$request["c"];
-
-        return view("videooverlay", compact('data', 'c'));
-    }
+ 
 }

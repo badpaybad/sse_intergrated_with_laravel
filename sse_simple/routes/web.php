@@ -16,7 +16,7 @@ Route::get('/channel', "ChannelController@index")->name("channel.index");
 Route::post('/channel/create', "ChannelController@create")->name("channel.create");
 Route::get('/channel/admin', "ChannelController@admin")->name("channel.admin");
 Route::get('/channel/broadcast', "ChannelController@broadcast")->name("channel.broadcast");
-Route::post('/channel/overlaycontent', "ChannelController@overlaycontent")->name("channel.overlaycontent");
+Route::post('/channel/changeoverlaycontent', "ChannelController@changeoverlaycontent")->name("channel.changeoverlaycontent");
 
 
 Route::post('/sendMsg', "SampleController@sendMsg")->name("sendMsg");

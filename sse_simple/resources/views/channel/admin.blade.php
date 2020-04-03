@@ -66,20 +66,39 @@
                 <button onclick="_videoOverlay.showOverlay();">Show overlay</button>
             </div>
         </div>
-        <div>
-            <label><input type="radio" value="top" name="position"> top</label>
-            <label><input type="radio" value="right" name="position"> right</label>
-            <label><input type="radio" value="bottom" name="position"> bottom</label>
-            <label><input type="radio" value="left" name="position"> left</label>            
-            <label><input type="radio" value="fullscreen" name="position"> fullscreen</label>            
-        </div>
-        <div>
-            <label>opacity: <input type="text"> </label>
-        </div>
-        <div>
-            <label><input type="checkbox" checked> show/hide </label>
-        </div>
-        
+        <fieldset>
+            <legend>Overlay config</legend>
+            <div>
+                <label><input type="checkbox" checked name="show"> show/hide </label>
+            </div>
+            <div>
+                <label> <input type="text" value="0.75" style="width:30px" name="opacity"> opacity</label>
+            </div>
+            <div>
+                <label><input type="radio" value="top" name="position"> top</label>
+                <label><input type="radio" value="right" name="position" checked> right</label>
+                <label><input type="radio" value="bottom" name="position"> bottom</label>
+                <label><input type="radio" value="left" name="position"> left</label>
+                <label><input type="radio" value="fullscreen" name="position"> fullscreen</label>
+            </div>
+            <div>
+                <label>Url or Content inside: 
+                    <textarea style="min-width:900px" name="urlOrContent">/uploads/public/ylinh.jpg</textarea> </label>
+            </div>
+            <div>
+                UrlType:
+            </div>
+            <div>
+                <label> <input type="radio" value="POST" name="method"> POST</label>
+                <label> <input type="radio" value="GET" name="method"> GET</label>
+                <label> <input type="radio" value="IMG" name="method" checked> IMG</label>
+                <label> <input type="radio" value="HTML" name="method"> HTML</label>
+            </div>
+            <div>
+                <button onclick="changeOverlayConfig()">Change</button>
+            </div>
+        </fieldset>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
@@ -95,21 +114,21 @@
     <script>
         var _videoOverlay = new VideoOverlay('video');
 
-        _videoOverlay.loadOverlayContent('/videooverlay', null, function(response) {
-            return response +
-                '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
-        }); //load content inside overlay in page load
+        var urlOverlayConent = '/channel/overlaycontent?c={{$data->channelName}}'
+
+        // _videoOverlay.loadOverlayContent('/videooverlay', null, function(response) {
+        //     return response +
+        //         '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
+        // }); //load content inside overlay in page load
 
         var _videoPlayer = new VideoPlayer('video', function(fullscreen) {
             _videoOverlay.requestFullscreen(fullscreen);
         });
     </script>
-    
+
     <script>
         var channelName = '{{$data->channelName}}'; //you channel to listener
         var typeOfWorker = typeof(SharedWorker) ? 'SharedWorker' : 'Worker';
-
-        var urlOverlayConent='/channel/overlaycontent?c={{$data->channelName}}'
 
         var subscriberName = '{{$data->channelName}}'; //should be the same to channelName and 1st character should not begin with number.
         const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t=' + typeOfWorker + '&c=' + channelName + '&s=' + subscriberName +
@@ -126,6 +145,8 @@
 
             _videoOverlay.changeOverlayPosition(e.data);
 
+            console.log(e.data);
+            
             _videoOverlay.loadOverlayContent(e.data.url, e.data, function(response) {
                 return response +
                     '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
@@ -134,13 +155,22 @@
 
         myWorker.start();
 
-        function txtMessage_sendMsg(txtMessage) {
-            //call to server side to post msg to other
-            var url = '/sendMsg';
+        function changeOverlayConfig() {
+            var show = $("input:checkbox[name ='show']").val();
+            var opacity = $("input[name ='opacity']").val();
+            var position = $("input:radio[name ='position']:checked").val();
+            var urlOrContent = $("textarea[name ='urlOrContent']").val();
+            var method = $("input:radio[name ='method']:checked").val();
+            
+            var url = '/channel/changeoverlaycontent';
             jQuery.post(url, {
                 csrf: '{{ csrf_token() }}',
                 c: channelName,
-                msg: jQuery('#' + txtMessage).val()
+                show: show,
+                opacity: opacity,
+                position: position,
+                url: urlOrContent,
+                method: method,
             }, function(response) {
                 // no need call other ajax call to reload new data into #messages
             }, "json");
@@ -149,7 +179,7 @@
         function txtMessage_onKeyup(sender, e) {
             if (e.keyCode == 13) {
                 // e.preventDefault();
-                txtMessage_sendMsg(sender.id);
+                changeOverlayConfig();
             }
         }
     </script>

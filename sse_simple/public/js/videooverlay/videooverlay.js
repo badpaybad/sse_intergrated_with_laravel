@@ -6,7 +6,7 @@ VideoOverlay = function (videoDomId) {
     this.$overlayBound = null;
     this.$overlay = null;
     this._isFullscreen = false;
-    this._currentUrl = null;
+    this._currentUrlOrContent = null;
     this._cssBound = null;
     this._cssVideo = null;
     this._cssOverlay = null;
@@ -70,7 +70,7 @@ VideoOverlay = function (videoDomId) {
             _this._cssOverlay.opacity = data.opacity;
         }
 
-        if (data.show || data.show == 'true') {
+        if (data.show || data.show == 'true' || data.show == 'on') {
             _this._cssOverlay.display = 'block';
         }
         else {
@@ -116,26 +116,59 @@ VideoOverlay = function (videoDomId) {
 
     };
 
-    this.loadOverlayContent = function (url, data, transformResponse) {
-        if (url) _this._currentUrl = url;
+    this.loadOverlayContent = function (urlOrContent, data, transformResponse) {
+        if (urlOrContent) _this._currentUrlOrContent = urlOrContent;
 
-        jQuery.post(
-            _this._currentUrl,
-            {
-                //csrf: '{{ csrf_token() }}',
-                //c: channelName,
-                data: data
-            },
-            function (response) {
+        if (data.method == 'POST') {
+            jQuery.post(
+                _this._currentUrlOrContent,
+                {
+                    data: data
+                },
+                function (response) {
 
-                var transformed= response;
-                if(transformResponse){
-                    transformed=transformResponse(response);
+                    var transformed = response;
+                    if (transformResponse) {
+                        transformed = transformResponse(response);
+                    }
+
+                    _this.$overlay.html(transformed);
                 }
+            );
+        }
+        else if (data.method == 'GET') {
+            jQuery.get(
+                _this._currentUrlOrContent,
+                function (response) {
 
-                _this.$overlay.html(transformed);                   
+                    var transformed = response;
+                    if (transformResponse) {
+                        transformed = transformResponse(response);
+                    }
+
+                    _this.$overlay.html(transformed);
+                }
+            );
+        }
+        else if (data.method == 'IMG') {
+            var transformed = '';
+            if (transformResponse) {
+                transformed = transformResponse(data);
             }
-        );
+            if (data.position == "top" || data.position == "bottom" || data.position == "fullscreen") {
+                _this.$overlay.html("<img src='" + _this._currentUrlOrContent + "' style='height:100%'/>");
+            } else {
+                _this.$overlay.html("<img src='" + _this._currentUrlOrContent + "' style='width:100%'/>");
+            }
+        }
+        else {
+            var transformed = '';
+            if (transformResponse) {
+                transformed = transformResponse(data);
+            }
+            _this.$overlay.html(_this._currentUrlOrContent);
+        }
+
     };
 
     this.requestFullscreen = function (fullscreen) {
