@@ -29,7 +29,7 @@ class ChannelController extends Controller
     {
         $data = new stdClass;
         $data->channelName = $channelName;
-        $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+        $data->embeded = "<iframe id='video' width='320' height='240' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
         $data->overlayData = $this->defaultOvelayData($channelName);
         return $data;
     }
