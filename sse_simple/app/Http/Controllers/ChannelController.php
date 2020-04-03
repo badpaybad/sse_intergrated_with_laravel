@@ -22,7 +22,28 @@ class ChannelController extends Controller
     }
     function getChannelName($channelName)
     {
+        if (empty($channelName)) return 'default';
         return $channelName;
+    }
+    function defaultChannel($channelName)
+    {
+        $data = new stdClass;
+        $data->channelName = $channelName;
+        $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+        $data->overlayData = $this->defaultOvelayData($channelName);
+    }
+    function defaultOvelayData($channelName)
+    {
+        $overlayData = new stdClass;
+        $overlayData->channel = $channelName;
+        $overlayData->datetime = date('c');
+        $overlayData->msg = '';
+        $overlayData->show = 'on';
+        $overlayData->position = 'right';
+        $overlayData->url = '/uploads/public/ylinh.jpg';
+        $overlayData->opacity = '0.75';
+        $overlayData->method = 'IMG';
+        return $overlayData;
     }
     public function index()
     {
@@ -35,22 +56,55 @@ class ChannelController extends Controller
         $channelName = @$all["c"];
         $channelName = $this->getChannelName($channelName);
 
+        $overlayData =  $this->redis->GetCache($channelName . ":overlaydata");
+        if (empty($overlayData)) {
+            $overlayData = $this->defaultOvelayData($channelName);
+        } else {
+            $overlayData = json_decode($overlayData);
+        }
+
         $data = $this->redis->GetCache($channelName);
         if (empty($data)) {
-            $data = new stdClass;
-            $data->channelName = "default";
-            $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+            $data = $this->defaultChannel($channelName);
         } else {
             $data = json_decode($data);
         }
+
+        $data->overlayData= $overlayData;
+
         return view('channel.admin', compact('data'));
+    }
+
+    public function broadcast(Request $request)
+    {
+        $all = $request->all();
+        $channelName = @$all["c"];
+        $channelName = $this->getChannelName($channelName);
+
+        $overlayData =  $this->redis->GetCache($channelName . ":overlaydata");
+        if (empty($overlayData)) {
+            $overlayData = $this->defaultOvelayData($channelName);
+        } else {
+            $overlayData = json_decode($overlayData);
+        }
+
+        $data = $this->redis->GetCache($channelName);
+        if (empty($data)) {
+            $data = $this->defaultChannel($channelName);
+        } else {
+            $data = json_decode($data);
+        }
+       
+        $data->overlayData= $overlayData;
+
+        return view('channel.broadcast', compact('data'));
     }
 
     public function create(Request $request)
     {
         $all = $request->all();
         $channelName = $all["c"];
-        $channelName=$this->getChannelName($channelName);
+        $channelName = $this->getChannelName($channelName);
 
         $embeded = $all["embeded"];
 
@@ -64,28 +118,11 @@ class ChannelController extends Controller
         return $channelData;
     }
 
-    public function broadcast(Request $request)
-    {
-        $all = $request->all();
-        $channelName = @$all["c"];
-        $channelName=$this->getChannelName($channelName);
-
-        $data = $this->redis->GetCache($channelName);
-        if (empty($data)) {
-            $data = new stdClass;
-            $data->channelName = "default";
-            $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
-        } else {
-            $data = json_decode($data);
-        }
-        return view('channel.broadcast', compact('data'));
-    }
-
     public function changeoverlaycontent(Request $request)
     {
         $request = $request->all();
         $channelName = @$request["c"];
-        $channelName=$this->getChannelName($channelName);
+        $channelName = $this->getChannelName($channelName);
 
         $show = $request["show"];
         $position = $request["position"];
@@ -93,7 +130,9 @@ class ChannelController extends Controller
         $opacity = $request["opacity"];
         $method = $request["method"];
         $overlayData = json_encode(array(
-            "channel" => $channelName, "datetime" => date('c'), "msg" => '',
+            "channel" => $channelName,
+            "datetime" => date('c'),
+            "msg" => '',
             "show" => $show,
             "position" => $position,
             "url" => $url,
@@ -102,10 +141,10 @@ class ChannelController extends Controller
             'method' => $method
         ));
 
-        $this->redis->GetCache($channelName . ":overlaydata", $overlayData);
+        $this->redis->SetCache($channelName . ":overlaydata", $overlayData);
 
         $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
-        $this->sse->SendToChannel("sse:".$channelName, $overlayData);
+        $this->sse->SendToChannel("sse:" . $channelName, $overlayData);
 
         return json_encode(array("sucess" => 1));
     }
