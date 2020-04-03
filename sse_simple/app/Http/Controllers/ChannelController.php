@@ -22,7 +22,7 @@ class ChannelController extends Controller
     }
     function getChannelName($channelName)
     {
-        if (empty($channelName)) return 'default';
+        if (empty($channelName)) return 'Ý Linh idol';
         return $channelName;
     }
     function defaultChannelData($channelName)

@@ -56,8 +56,8 @@
             <a href="/channel/broadcast?c={{$data->channelName}}" target="_blank"> Link to invite</a>
         </h1>
         <div><label>channelName:<br><input name='channelName' value="{{$data->channelName}}"></label></div>
-        <div>Youtube embeded live stream:
-            <a href='/uploads/public/copy_embeded_youtube.PNG' target="_blank">Right click and copy, check image</a><br>
+        <div>Youtube embeded code of live stream:
+            <a href='/uploads/public/copy_embeded_youtube.PNG' target="_blank">How to get embeded code, check image</a><br>
             <textarea style="min-width:900px" name='embeded'>{!!$data->embeded!!}</textarea>
         </div>
         <div>
