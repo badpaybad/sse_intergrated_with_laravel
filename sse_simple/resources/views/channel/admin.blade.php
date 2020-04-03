@@ -80,7 +80,8 @@
         <fieldset>
             <legend>Overlay config</legend>
             <div>
-                <label><input type="checkbox" checked name="show"> show/hide </label>
+                <label><input type="radio" value="true" checked name="showhide"> show </label>
+                <label><input type="radio" value="false" name="showhide"> hide </label>
             </div>
             <div>
                 <label> <input type="text" value="0.75" style="width:30px" name="opacity"> opacity</label>
@@ -172,7 +173,7 @@
         myWorker.start();
 
         function changeOverlayConfig() {
-            var show = $("input:checkbox[name ='show']").val();
+            var show = $("input:radio[name ='showhide']:checked").val();
             var opacity = $("input[name ='opacity']").val();
             var position = $("input:radio[name ='position']:checked").val();
             var urlOrContent = $("textarea[name ='urlOrContent']").val();

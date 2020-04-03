@@ -69,9 +69,8 @@ VideoOverlay = function (videoDomId) {
         if (data.opacity) {
             _this._cssOverlay.opacity = data.opacity;
         }
-
-        if (data.show || data.show == 'true' || data.show == 'on') {
-            _this._cssOverlay.display = 'block';
+        if (data.show==true || data.show == 'true' || data.show == 'on') {
+            _this._cssOverlay.display = 'block';           
         }
         else {
             _this._cssOverlay.display = 'none';

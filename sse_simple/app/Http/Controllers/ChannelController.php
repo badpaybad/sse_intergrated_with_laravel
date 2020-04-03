@@ -25,12 +25,13 @@ class ChannelController extends Controller
         if (empty($channelName)) return 'default';
         return $channelName;
     }
-    function defaultChannel($channelName)
+    function defaultChannelData($channelName)
     {
         $data = new stdClass;
         $data->channelName = $channelName;
         $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
         $data->overlayData = $this->defaultOvelayData($channelName);
+        return $data;
     }
     function defaultOvelayData($channelName)
     {
@@ -64,13 +65,14 @@ class ChannelController extends Controller
         }
 
         $data = $this->redis->GetCache($channelName);
+
         if (empty($data)) {
-            $data = $this->defaultChannel($channelName);
+            $data = $this->defaultChannelData($channelName);
         } else {
             $data = json_decode($data);
         }
 
-        $data->overlayData= $overlayData;
+        $data->overlayData = $overlayData;
 
         return view('channel.admin', compact('data'));
     }
@@ -90,12 +92,12 @@ class ChannelController extends Controller
 
         $data = $this->redis->GetCache($channelName);
         if (empty($data)) {
-            $data = $this->defaultChannel($channelName);
+            $data = $this->defaultChannelData($channelName);
         } else {
             $data = json_decode($data);
         }
-       
-        $data->overlayData= $overlayData;
+
+        $data->overlayData = $overlayData;
 
         return view('channel.broadcast', compact('data'));
     }
@@ -129,6 +131,7 @@ class ChannelController extends Controller
         $url = $request["url"];
         $opacity = $request["opacity"];
         $method = $request["method"];
+        
         $overlayData = json_encode(array(
             "channel" => $channelName,
             "datetime" => date('c'),
