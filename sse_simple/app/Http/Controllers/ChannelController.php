@@ -114,6 +114,11 @@ class ChannelController extends Controller
             return json_encode(["channelName" => "Not allow empty", "embeded" => "Not allow empty"]);
         }
 
+        $existed= $this->redis->GetCache($channelName);
+        if(!empty($existed)){
+            return $existed;
+        }
+
         $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded, 'broadcastUrl' => 'channel/broadcast?c=' . $channelName]);
         $this->redis->SetCache($channelName, $channelData);
 
