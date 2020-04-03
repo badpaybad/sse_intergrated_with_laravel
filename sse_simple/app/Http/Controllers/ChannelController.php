@@ -20,7 +20,10 @@ class ChannelController extends Controller
         $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
         $this->redis  = new RedisClient(env('REDIS_HOST'), env('REDIS_PORT'),  env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
     }
-
+    function getChannelName($channelName)
+    {
+        return $channelName;
+    }
     public function index()
     {
         return view('index');
@@ -30,11 +33,15 @@ class ChannelController extends Controller
     {
         $all = $request->all();
         $channelName = @$all["c"];
+        $channelName = $this->getChannelName($channelName);
+
         $data = $this->redis->GetCache($channelName);
         if (empty($data)) {
             $data = new stdClass;
             $data->channelName = "default";
             $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+        } else {
+            $data = json_decode($data);
         }
         return view('channel.admin', compact('data'));
     }
@@ -42,15 +49,16 @@ class ChannelController extends Controller
     public function create(Request $request)
     {
         $all = $request->all();
-        $channelName = $all["channelName"];
+        $channelName = $all["c"];
+        $channelName=$this->getChannelName($channelName);
+
         $embeded = $all["embeded"];
-        
 
         if (empty($channelName) || empty($embeded)) {
             return json_encode(["channelName" => "Not allow empty", "embeded" => "Not allow empty"]);
         }
 
-        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded,'broadcastUrl'=>'channel/broadcast?c='.$channelName]);
+        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded, 'broadcastUrl' => 'channel/broadcast?c=' . $channelName]);
         $this->redis->SetCache($channelName, $channelData);
 
         return $channelData;
@@ -60,11 +68,15 @@ class ChannelController extends Controller
     {
         $all = $request->all();
         $channelName = @$all["c"];
+        $channelName=$this->getChannelName($channelName);
+
         $data = $this->redis->GetCache($channelName);
         if (empty($data)) {
             $data = new stdClass;
             $data->channelName = "default";
             $data->embeded = "<iframe id='video' width='480' height='360' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+        } else {
+            $data = json_decode($data);
         }
         return view('channel.broadcast', compact('data'));
     }
@@ -73,12 +85,13 @@ class ChannelController extends Controller
     {
         $request = $request->all();
         $channelName = @$request["c"];
+        $channelName=$this->getChannelName($channelName);
+
         $show = $request["show"];
         $position = $request["position"];
         $url = $request["url"];
         $opacity = $request["opacity"];
         $method = $request["method"];
-
         $overlayData = json_encode(array(
             "channel" => $channelName, "datetime" => date('c'), "msg" => '',
             "show" => $show,
@@ -92,10 +105,8 @@ class ChannelController extends Controller
         $this->redis->GetCache($channelName . ":overlaydata", $overlayData);
 
         $this->sse = new EventListenerHelper(env('REDIS_HOST'), env('REDIS_PORT'), env('REDIS_PASSWORD'), env('REDIS_NOTI_DB'));
-        $this->sse->SendToChannel($channelName, $overlayData);
+        $this->sse->SendToChannel("sse:".$channelName, $overlayData);
 
         return json_encode(array("sucess" => 1));
     }
-
- 
 }

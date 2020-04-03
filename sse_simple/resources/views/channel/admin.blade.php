@@ -51,7 +51,18 @@
 
 <body>
     <div class="flex-center position-ref full-height">
-        <h1>{{$data->channelName}}</h1>
+       
+        <h1>{{$data->channelName}}
+            <a href="/channel/broadcast?c={{$data->channelName}}" target="_blank"> Link to invite</a>
+        </h1>
+        <div><label>channelName:<br><input name='channelName' value="{{$data->channelName}}"></label></div>
+        <div>Youtube embeded live stream:
+            <a href='/uploads/public/copy_embeded_youtube.PNG' target="_blank">Right click and copy, check image</a><br>
+            <textarea style="min-width:900px" name='embeded'>{!!$data->embeded!!}</textarea>
+        </div>
+        <div>
+            <button onclick="createChannel()">Create channel</button>
+        </div>
         <div>
             <div>
                 {!!$data->embeded!!}
@@ -82,7 +93,7 @@
                 <label><input type="radio" value="fullscreen" name="position"> fullscreen</label>
             </div>
             <div>
-                <label>Url or Content inside: 
+                <label>Url or Content inside:<br>
                     <textarea style="min-width:900px" name="urlOrContent">/uploads/public/ylinh.jpg</textarea> </label>
             </div>
             <div>
@@ -127,11 +138,13 @@
     </script>
 
     <script>
-        var channelName = '{{$data->channelName}}'; //you channel to listener
+        var notiChannelName = 'sse:{{$data->channelName}}'; //you channel to listener
         var typeOfWorker = typeof(SharedWorker) ? 'SharedWorker' : 'Worker';
 
         var subscriberName = '{{$data->channelName}}'; //should be the same to channelName and 1st character should not begin with number.
-        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t=' + typeOfWorker + '&c=' + channelName + '&s=' + subscriberName +
+   
+        const swUrl = '{{ asset("js/webpushnotification/notificationwebworker.js") }}?t=' + typeOfWorker 
+        + '&c=' + encodeURIComponent(notiChannelName) + '&s=' + encodeURIComponent(subscriberName )+
             '&token=' + encodeURIComponent('<?php echo \Auth::getSession()->getId() ?>');
 
         var myWorker = new WebWorkerWrapper(swUrl, typeOfWorker);
@@ -146,7 +159,7 @@
             _videoOverlay.changeOverlayPosition(e.data);
 
             console.log(e.data);
-            
+
             _videoOverlay.loadOverlayContent(e.data.url, e.data, function(response) {
                 return response +
                     '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
@@ -161,18 +174,20 @@
             var position = $("input:radio[name ='position']:checked").val();
             var urlOrContent = $("textarea[name ='urlOrContent']").val();
             var method = $("input:radio[name ='method']:checked").val();
-            
+
+            if(!show || show=='undefined') show=false;
+
             var url = '/channel/changeoverlaycontent';
             jQuery.post(url, {
                 csrf: '{{ csrf_token() }}',
-                c: channelName,
+                c: '{{$data->channelName}}',
                 show: show,
                 opacity: opacity,
                 position: position,
                 url: urlOrContent,
                 method: method,
             }, function(response) {
-                // no need call other ajax call to reload new data into #messages
+
             }, "json");
         }
 
@@ -181,6 +196,25 @@
                 // e.preventDefault();
                 changeOverlayConfig();
             }
+        }
+
+        function createChannel() {
+            var channelName = $("input[name ='channelName']").val();
+            var embeded = $("textarea[name ='embeded']").val();
+            var cfrm = confirm('Create channel?');
+            if (!cfrm) return;
+            var url = '/channel/create';
+            jQuery.post(url, {
+                csrf: '{{ csrf_token() }}',
+                c: channelName,
+                embeded: embeded
+            }, function(response) {               
+                $created = response;
+                if(typeof(response)=='string'){
+                    $created=JSON.parse(response);
+                }
+                window.location = '/channel/admin?c=' + encodeURI($created.channelName);
+            }, "json");
         }
     </script>
 

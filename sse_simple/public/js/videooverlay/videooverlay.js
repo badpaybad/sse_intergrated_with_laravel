@@ -79,30 +79,40 @@ VideoOverlay = function (videoDomId) {
         if (data.position == 'fullscreen') {
             _this._cssOverlay.top = 0;
             _this._cssOverlay.left = 0;
+            _this._cssOverlay.right = 'auto';
+            _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '100%';
             _this._cssOverlay.height = '100%';
         }
         if (data.position == 'top') {
             _this._cssOverlay.top = 0;
-            _this._cssOverlay.left = 0;
+            _this._cssOverlay.left = 0;            
+            _this._cssOverlay.right = 'auto';
+            _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '100%';
             _this._cssOverlay.height = '50%';
         }
         if (data.position == 'right') {
             _this._cssOverlay.top = 0;
-            _this._cssOverlay.right = 0;
+            _this._cssOverlay.right = 0;            
+            _this._cssOverlay.left = 'auto';
+            _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '50%';
             _this._cssOverlay.height = '100%';
         }
         if (data.position == 'bottom') {
             _this._cssOverlay.bottom = 0;
-            _this._cssOverlay.left = 0;
+            _this._cssOverlay.left = 0;         
+            _this._cssOverlay.top = 'auto';
+            _this._cssOverlay.right = 'auto';
             _this._cssOverlay.width = '100%';
             _this._cssOverlay.height = '50%';
         }
         if (data.position == 'left') {
             _this._cssOverlay.top = 0;
-            _this._cssOverlay.left = 0;
+            _this._cssOverlay.left = 0;         
+            _this._cssOverlay.right = 'auto';
+            _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '50%';
             _this._cssOverlay.height = '100%';
         }
@@ -251,7 +261,7 @@ VideoOverlay = function (videoDomId) {
         _this._cssVideo = {
             position: "absolute",
             top: 0,
-            left: 0,
+            left: 0,         
             width: _this.$video.width(),
             height: _this.$video.height(),
             zIndex: 9999
@@ -268,6 +278,8 @@ VideoOverlay = function (videoDomId) {
             position: "absolute",
             top: 0,
             right: 0,
+            left:'auto',
+            bottom:'auto',
             //float:'right',
             width: '50%',
             height: '100%',
