@@ -105,6 +105,7 @@
                 <label> <input type="radio" value="GET" name="method"> GET</label>
                 <label> <input type="radio" value="IMG" name="method" checked> IMG</label>
                 <label> <input type="radio" value="HTML" name="method"> HTML</label>
+                <label> <input type="radio" value="IFRAME" name="method"> IFRAME</label>
             </div>
             <div>
                 <button onclick="changeOverlayConfig()">Change</button>

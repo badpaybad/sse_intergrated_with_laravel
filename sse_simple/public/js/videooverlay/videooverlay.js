@@ -170,6 +170,9 @@ VideoOverlay = function (videoDomId) {
                 _this.$overlay.html("<img src='" + _this._currentUrlOrContent + "' style='width:100%'/>");
             }
         }
+        else if (data.method == 'IFRAME'){
+            _this.$overlay.html("<iframe src='" + _this._currentUrlOrContent + "' style='width:100%; height:100%'/>");
+        }
         else {
             var transformed = '';
             if (transformResponse) {
