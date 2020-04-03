@@ -57,7 +57,7 @@
         </h1>
         <div><label>channelName:<br><input name='channelName' value="{{$data->channelName}}"></label></div>
         <div>Youtube embeded code of live stream:
-            <a href='/uploads/public/copy_embeded_youtube.PNG' target="_blank">How to get embeded code, check image</a><br>
+            <a href='/uploads/public/copy_embeded_youtube.PNG' target="_blank">How to get embeded code please check image</a><br>
             <textarea style="min-width:900px" name='embeded'>{!!$data->embeded!!}</textarea>
         </div>
         <div>
@@ -98,7 +98,7 @@
                     <textarea style="min-width:900px" name="urlOrContent">/uploads/public/ylinh.jpg</textarea> </label>
             </div>
             <div>
-                UrlType:
+                Url or Content type:
             </div>
             <div>
                 <label> <input type="radio" value="POST" name="method"> POST</label>
