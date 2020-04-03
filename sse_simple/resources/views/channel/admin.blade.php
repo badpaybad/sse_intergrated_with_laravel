@@ -58,7 +58,7 @@
         <div><label>channelName:<br><input name='channelName' value="{{$data->channelName}}"></label></div>
         <div>Youtube embeded code of live stream:
             <a href='/uploads/public/copy_embeded_youtube.PNG' target="_blank">How to get embeded code please check image</a><br>
-            <textarea style="min-width:900px" name='embeded'>{!!$data->embeded!!}</textarea>
+            <textarea style="min-width:320px" name='embeded'>{!!$data->embeded!!}</textarea>
         </div>
         <div>
             <button onclick="createChannel()">Create channel</button>
@@ -95,7 +95,7 @@
             </div>
             <div>
                 <label>Url or Content inside:<br>
-                    <textarea style="min-width:900px" name="urlOrContent">/uploads/public/ylinh.jpg</textarea> </label>
+                    <textarea style="min-width:320px" name="urlOrContent">/uploads/public/ylinh.jpg</textarea> </label>
             </div>
             <div>
                 Url or Content type:
