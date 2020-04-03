@@ -12,7 +12,9 @@ VideoPlayer = function (videoId, onFullScreenCallback) {
     this.init = function () {
 
         _this.$video = document.getElementById(videoId);
-        _this.$video.controls = false;
+
+        if( _this.$video.controls)
+            _this.$video.controls = false;
 
         _this.play();
 
