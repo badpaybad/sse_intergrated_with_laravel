@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, minimal-ui">
     <meta name='csrf' content="{{ csrf_token() }}">
-    <title>Laravel</title>
+    <title>{{$data->channelName}}</title>
     <style>
         :-webkit-full-screen body,
         :-moz-full-screen body,

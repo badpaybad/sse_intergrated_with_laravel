@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, minimal-ui">
     <meta name='csrf' content="{{ csrf_token() }}">
-    <title>Laravel</title>
+    <title>{{$data->channelName}}</title>
     <style>
         :-webkit-full-screen body,
         :-moz-full-screen body,
@@ -51,11 +51,6 @@
 
 <body>
     <div class="flex-center position-ref full-height">
-
-        <h1>{{$data->channelName}}
-            <a href="/channel/broadcast?c={{$data->channelName}}" target="_blank"> Link to invite</a>
-        </h1>
-
         <div>
             <div>
                 {!!$data->embeded!!}
@@ -73,8 +68,9 @@
                 <button onclick="_videoOverlay.fullWidth();_videoPlayer.fullWidth()">Full width overlay</button>
             </div>
         </div>
-
-
+        <h1>{{$data->channelName}}
+            <a href="/channel/broadcast?c={{$data->channelName}}" target="_blank"> Link to invite</a>
+        </h1>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
@@ -103,6 +99,7 @@
                 '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
         });
 
+        _videoOverlay.fullWidth();
 
         var __youtubePlayer = null;
 
@@ -115,10 +112,10 @@
                 playerVars: {
                     'autoplay': 0,
                     'controls': 0,
-                    "loop":1,
-                    'start':1,
-                    'rel':0,
-                    "playlist" :'{{$data->embededId}}'
+                    "loop": 1,
+                    'start': 1,
+                    'rel': 0,
+                    "playlist": '{{$data->embededId}}'
                 },
                 events: {
                     'onReady': function(e) {},
