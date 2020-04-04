@@ -118,7 +118,7 @@ VideoOverlay = function (videoDomId) {
         }
 
         _this._cssOverlay.overflow = 'auto';
-        if (data.method == 'IFRAME') {
+        if (data.method == 'IFRAME' || data.method == 'IMG') {
             _this._cssOverlay.overflow = 'hidden';
         }
 
@@ -200,8 +200,8 @@ VideoOverlay = function (videoDomId) {
 
             _this.$overlay.css(_this._cssOverlay);
         }
-        else {     
-            _this.$video.css({ 
+        else {
+            _this.$video.css({
                 position: "absolute",
                 top: 0,
                 left: 0,
