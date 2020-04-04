@@ -10,7 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', "SampleController@index")->name("index");
+Route::get('/', "ChannelController@admin")->name("index");
 
 Route::get('/channel', "ChannelController@index")->name("channel.index");
 Route::post('/channel/create', "ChannelController@create")->name("channel.create");

@@ -1,7 +1,7 @@
 
 VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
     var _this = this;
-    this._youtube=youtubePlayer;
+    this._youtube = youtubePlayer;
     this._videoId = null;
     this.$video = null;
     this._videoFullScreen = false;
@@ -10,15 +10,15 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
     _this._videoId = videoId;
     _this._onFullScreenCallback = onFullScreenCallback;
 
-    this.setYoutubePlayer=function(player){
-        _this._youtube=player;
+    this.setYoutubePlayer = function (player) {
+        _this._youtube = player;
     }
 
     this.init = function () {
 
         _this.$video = document.getElementById(videoId);
 
-        if( _this.$video.controls)
+        if (_this.$video.controls)
             _this.$video.controls = false;
 
         _this.play();
@@ -34,27 +34,30 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
         }
     };
     this.play = function () {
-        if(_this._youtube){
+        if (_this._youtube) {
             _this._youtube.playVideo();
         }
         if (_this.$video.paused) {
             _this.$video.play();
         }
     };
-    this.pause = function () {       
-        if(_this._youtube){
+    this.pause = function () {
+        if (_this._youtube) {
             _this._youtube.pauseVideo();
         }
         if (!_this.$video.paused) {
             _this.$video.pause();
         }
-    }; 
-    this.stop = function () {       
-        if(_this._youtube){
+    };
+    this.stop = function () {
+        if (_this._youtube) {
+            _this._youtube.playVideo();
+            _this._youtube.seekTo(0);
+            _this._youtube.pauseVideo();
             _this._youtube.stopVideo();
         }
         if (!_this.$video) {
-            _this.$video.stop(-1);
+            _this.$video.stop();
         }
     };
     this.screenFull = function () {
