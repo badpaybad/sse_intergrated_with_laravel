@@ -6,7 +6,7 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
     this.$video = null;
     this._videoFullScreen = false;
     this._onFullScreenCallback = null;
-
+    this._css=null;
     _this._videoId = videoId;
     _this._onFullScreenCallback = onFullScreenCallback;
 
@@ -24,6 +24,11 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
     this.init = function () {
 
         _this.$video = document.getElementById(videoId);
+
+        _this.css={
+            width: jQuery(_this.$video).width(),
+            height: jQuery(_this.$video).height()
+        }
 
         if (_this.$video.controls)
             _this.$video.controls = false;
@@ -67,6 +72,18 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
             _this.$video.stop();
         }
     };
+    this.fullWidth=function(restore){
+        if(restore==true){
+            jQuery(_this.$video).css(_this.css);
+          
+        }else{
+            var cssFullWidth={
+                width: '100%',
+                height: '100%'
+            }
+            jQuery(_this.$video).css(cssFullWidth);
+        }
+    }
     this.screenFull = function () {
         if (_this._videoFullScreen == true) return;
 

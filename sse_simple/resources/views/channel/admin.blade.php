@@ -68,6 +68,8 @@
                 {!!$data->embeded!!}
             </div>
             <div>
+                <!-- <button onclick="_videoPlayer.fullWidth(true)">Normal</button>
+                <button onclick="_videoPlayer.fullWidth()">FullWidth</button> -->
                 <button onclick="_videoPlayer.screenFull()">Fullscreen</button>
                 <button onclick="_videoPlayer.play()">Play</button>
                 <button onclick="_videoPlayer.pause()">Pause</button>
@@ -76,6 +78,9 @@
             <div>
                 <button onclick="_videoOverlay.hideOverlay()">Hide overlay</button>
                 <button onclick="_videoOverlay.showOverlay();">Show overlay</button>
+                                
+                <button onclick="_videoOverlay.fullWidth(true);_videoPlayer.fullWidth(true)">Normal width overlay</button>
+                <button onclick="_videoOverlay.fullWidth();_videoPlayer.fullWidth()">Full width overlay</button>
             </div>
         </div>
         <fieldset>

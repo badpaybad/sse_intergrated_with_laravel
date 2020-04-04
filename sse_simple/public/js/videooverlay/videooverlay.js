@@ -65,13 +65,13 @@ VideoOverlay = function (videoDomId) {
     this.changeOverlayPosition = function (data) {
         if (!data) return;
         if (!data.position) return;
-        if(data.type!='overlay') return;
+        if (data.type != 'overlay') return;
 
         if (data.opacity) {
             _this._cssOverlay.opacity = data.opacity;
         }
-        if (data.show==true || data.show == 'true' || data.show == 'on') {
-            _this._cssOverlay.display = 'block';           
+        if (data.show == true || data.show == 'true' || data.show == 'on') {
+            _this._cssOverlay.display = 'block';
         }
         else {
             _this._cssOverlay.display = 'none';
@@ -86,7 +86,7 @@ VideoOverlay = function (videoDomId) {
         }
         if (data.position == 'top') {
             _this._cssOverlay.top = 0;
-            _this._cssOverlay.left = 0;            
+            _this._cssOverlay.left = 0;
             _this._cssOverlay.right = 'auto';
             _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '100%';
@@ -94,7 +94,7 @@ VideoOverlay = function (videoDomId) {
         }
         if (data.position == 'right') {
             _this._cssOverlay.top = 0;
-            _this._cssOverlay.right = 0;            
+            _this._cssOverlay.right = 0;
             _this._cssOverlay.left = 'auto';
             _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '50%';
@@ -102,7 +102,7 @@ VideoOverlay = function (videoDomId) {
         }
         if (data.position == 'bottom') {
             _this._cssOverlay.bottom = 0;
-            _this._cssOverlay.left = 0;         
+            _this._cssOverlay.left = 0;
             _this._cssOverlay.top = 'auto';
             _this._cssOverlay.right = 'auto';
             _this._cssOverlay.width = '100%';
@@ -110,16 +110,16 @@ VideoOverlay = function (videoDomId) {
         }
         if (data.position == 'left') {
             _this._cssOverlay.top = 0;
-            _this._cssOverlay.left = 0;         
+            _this._cssOverlay.left = 0;
             _this._cssOverlay.right = 'auto';
             _this._cssOverlay.bottom = 'auto';
             _this._cssOverlay.width = '50%';
             _this._cssOverlay.height = '100%';
         }
-        
-        _this._cssOverlay.overflow='auto';
-        if (data.method == 'IFRAME'){
-            _this._cssOverlay.overflow='hidden';
+
+        _this._cssOverlay.overflow = 'auto';
+        if (data.method == 'IFRAME') {
+            _this._cssOverlay.overflow = 'hidden';
         }
 
         _this.$overlay.css(_this._cssOverlay);
@@ -131,8 +131,8 @@ VideoOverlay = function (videoDomId) {
 
     };
 
-    this.loadOverlayContent = function (urlOrContent, data, transformResponse) {        
-        if(data.type!='overlay') return;
+    this.loadOverlayContent = function (urlOrContent, data, transformResponse) {
+        if (data.type != 'overlay') return;
 
         if (urlOrContent) _this._currentUrlOrContent = urlOrContent;
 
@@ -178,7 +178,7 @@ VideoOverlay = function (videoDomId) {
                 _this.$overlay.html("<img src='" + _this._currentUrlOrContent + "' style='width:100%'/>");
             }
         }
-        else if (data.method == 'IFRAME'){
+        else if (data.method == 'IFRAME') {
             _this.$overlay.html("<iframe src='" + _this._currentUrlOrContent + "' style='width:100%; height:100%'/>");
 
         }
@@ -191,7 +191,35 @@ VideoOverlay = function (videoDomId) {
         }
 
     };
+    this.fullWidth = function (restore) {
+        if (restore == true) {
 
+            _this.$video.css(_this._cssVideo);
+
+            _this.$overlayBound.css(_this._cssBound);
+
+            _this.$overlay.css(_this._cssOverlay);
+        }
+        else {     
+            _this.$video.css({ 
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: jQuery(document).height(),
+                zIndex: 9999
+            });
+
+            _this.$overlayBound.css({
+                position: "relative",
+                width: '100%',
+                height: jQuery(document).height(),
+                border: "",
+                zIndex: 999,
+                overflow: 'hidden'
+            });
+        }
+    };
     this.requestFullscreen = function (fullscreen) {
         if (fullscreen == null || fullscreen == "undefined") {
             fullscreen = _this._isFullscreen;
@@ -272,7 +300,7 @@ VideoOverlay = function (videoDomId) {
         _this._cssVideo = {
             position: "absolute",
             top: 0,
-            left: 0,         
+            left: 0,
             width: _this.$video.width(),
             height: _this.$video.height(),
             zIndex: 9999
@@ -289,8 +317,8 @@ VideoOverlay = function (videoDomId) {
             position: "absolute",
             top: 0,
             right: 0,
-            left:'auto',
-            bottom:'auto',
+            left: 'auto',
+            bottom: 'auto',
             //float:'right',
             width: '50%',
             height: '100%',
