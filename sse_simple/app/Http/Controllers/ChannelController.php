@@ -29,25 +29,29 @@ class ChannelController extends Controller
     {
         $data = new stdClass;
         $data->channelName = $channelName;
-        $data->embeded = $this->addYoutubeJsIfNeed("<iframe id='video' width='320' height='240' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>");
+        $embededId = "";
+        $data->embeded = $this->addYoutubeJsIfNeed("<iframe id='video' width='320' height='240' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>", $embededId);
+        $data->embededId=$embededId;
         $data->overlayData = $this->defaultOvelayData($channelName);
         return $data;
     }
-    function addYoutubeJsIfNeed($embeded)
+    function addYoutubeJsIfNeed($embeded, &$embededId)
     {
         preg_match('/(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))/', $embeded, $output_array);
         if (empty($output_array) || count($output_array) == 0) return $embeded;
         $url = $output_array[0];
+        $arrSegment = explode('/', $url);
+        $embededId = $arrSegment[count($arrSegment) - 1];
         $idx = strpos($url, "?");
         if (strpos($embeded, 'enablejsapi') <= 0) {
             $urlNew = $url;
             if ($idx == false || $idx == 0) {
-                $urlNew = $url . '?enablejsapi=1&controls=0';
+                $urlNew = $url . '?enablejsapi=1&controls=0&loop=1&start=1&rel=0&playlist='.$embededId;
             } else {
-                $urlNew = $url . '&enablejsapi=1&controls=0';
+                $urlNew = $url . '&enablejsapi=1&controls=0&loop=1&start=1&rel=0&playlist='.$embededId;
             }
             $embeded = str_replace($url, $urlNew, $embeded);
-        } 
+        }
 
         return $embeded;
     }
@@ -137,10 +141,12 @@ class ChannelController extends Controller
         if (!empty($existed)) {
             return $existed;
         }
+        $embededId="";
+        $embeded = $this->addYoutubeJsIfNeed($embeded,$embededId);
 
-        $embeded = $this->addYoutubeJsIfNeed($embeded);
-
-        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded, 'broadcastUrl' => 'channel/broadcast?c=' . $channelName]);
+        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded,
+        "embededId" => $embededId,
+        'broadcastUrl' => 'channel/broadcast?c=' . $channelName]);
         $this->redis->SetCache($channelName, $channelData);
 
         return $channelData;

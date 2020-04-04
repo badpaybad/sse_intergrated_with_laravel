@@ -157,11 +157,20 @@
             __youtubePlayer = new YT.Player('video', {
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 0
+                    'controls': 0,
+                    "loop":1,
+                    'start':1,
+                    'rel':0,
+                    "playlist" :'{{$data->embededId}}'
                 },
                 events: {
                     'onReady': function(e) {},
-                    'onStateChange': function(e) {}
+                    'onStateChange': function(e) {
+                        console.log(e);
+                        console.log(__youtubePlayer.getCurrentTime());
+                        if(e.data==5)
+                            e.data=-1;
+                    }
                 }
             });
             _videoPlayer.setYoutubePlayer(__youtubePlayer);

@@ -63,7 +63,7 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
     };
     this.stop = function () {
         if (_this._youtube) {       
-             _this._youtube.seekTo(0);
+             _this._youtube.seekTo(1);
             // _this._youtube.playVideo();
             //_this._youtube.pauseVideo();
             _this._youtube.stopVideo();
