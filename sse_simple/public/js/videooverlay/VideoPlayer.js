@@ -48,6 +48,14 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
         if (!_this.$video.paused) {
             _this.$video.pause();
         }
+    }; 
+    this.stop = function () {       
+        if(_this._youtube){
+            _this._youtube.stopVideo();
+        }
+        if (!_this.$video) {
+            _this.$video.stop(-1);
+        }
     };
     this.screenFull = function () {
         if (_this._videoFullScreen == true) return;

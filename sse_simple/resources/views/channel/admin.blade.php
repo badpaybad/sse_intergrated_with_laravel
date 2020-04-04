@@ -71,6 +71,7 @@
                 <button onclick="_videoPlayer.screenFull()">Fullscreen</button>
                 <button onclick="_videoPlayer.play()">Play</button>
                 <button onclick="_videoPlayer.pause()">Pause</button>
+                <button onclick="_videoPlayer.stop()">Stop</button>
             </div>
             <div>
                 <button onclick="_videoOverlay.hideOverlay()">Hide overlay</button>
@@ -149,7 +150,10 @@
 
         function onYouTubeIframeAPIReady() {
             __youtubePlayer = new YT.Player('video', {
-                playerVars: { 'autoplay': 0, 'controls': 0 },
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0
+                },
                 events: {
                     'onReady': function(e) {},
                     'onStateChange': function(e) {}

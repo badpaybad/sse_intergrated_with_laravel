@@ -64,6 +64,7 @@
                 <button onclick="_videoPlayer.screenFull()">Fullscreen</button>
                 <button onclick="_videoPlayer.play()">Play</button>
                 <button onclick="_videoPlayer.pause()">Pause</button>
+                <button onclick="_videoPlayer.stop()">Stop</button>
             </div>
             <div>
                 <button onclick="_videoOverlay.hideOverlay()">Hide overlay</button>
@@ -84,6 +85,7 @@
     <script src="/js/videooverlay/VideoOverlay.js"></script>
     <script src="/js/videooverlay/VideoPlayer.js"></script>
     <script src="/js/webpushnotification/WebWorkerWrapper.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <textarea style="display: none" id='dataChannel'>
     {!!json_encode($data)!!}
     </textarea>
@@ -99,9 +101,26 @@
                 '<div><button onclick="_videoPlayer.screenNormal()">Exit fullscreen</button></div>'
         });
 
+
+        var __youtubePlayer = null;
+
         var _videoPlayer = new VideoPlayer('video', function(fullscreen) {
             _videoOverlay.requestFullscreen(fullscreen);
-        });
+        }, __youtubePlayer);
+
+        function onYouTubeIframeAPIReady() {
+            __youtubePlayer = new YT.Player('video', {
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0
+                },
+                events: {
+                    'onReady': function(e) {},
+                    'onStateChange': function(e) {}
+                }
+            });
+            _videoPlayer.setYoutubePlayer(__youtubePlayer);
+        }
     </script>
 
     <script>
