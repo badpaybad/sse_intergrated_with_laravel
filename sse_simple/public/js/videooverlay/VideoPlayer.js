@@ -1,6 +1,7 @@
-VideoPlayer = function (videoId, onFullScreenCallback) {
-    var _this = this;
 
+VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
+    var _this = this;
+    this._youtube=youtubePlayer;
     this._videoId = null;
     this.$video = null;
     this._videoFullScreen = false;
@@ -8,6 +9,10 @@ VideoPlayer = function (videoId, onFullScreenCallback) {
 
     _this._videoId = videoId;
     _this._onFullScreenCallback = onFullScreenCallback;
+
+    this.setYoutubePlayer=function(player){
+        _this._youtube=player;
+    }
 
     this.init = function () {
 
@@ -29,11 +34,17 @@ VideoPlayer = function (videoId, onFullScreenCallback) {
         }
     };
     this.play = function () {
+        if(_this._youtube){
+            _this._youtube.playVideo();
+        }
         if (_this.$video.paused) {
             _this.$video.play();
         }
     };
-    this.pause = function () {
+    this.pause = function () {       
+        if(_this._youtube){
+            _this._youtube.pauseVideo();
+        }
         if (!_this.$video.paused) {
             _this.$video.pause();
         }
@@ -100,6 +111,8 @@ VideoPlayer = function (videoId, onFullScreenCallback) {
             }
         });
     }
+
+
 
     this.init();
     return this;

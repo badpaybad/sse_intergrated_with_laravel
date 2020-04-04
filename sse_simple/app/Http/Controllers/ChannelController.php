@@ -29,9 +29,27 @@ class ChannelController extends Controller
     {
         $data = new stdClass;
         $data->channelName = $channelName;
-        $data->embeded = "<iframe id='video' width='320' height='240' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>";
+        $data->embeded = $this->addYoutubeJsIfNeed("<iframe id='video' width='320' height='240' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>");
         $data->overlayData = $this->defaultOvelayData($channelName);
         return $data;
+    }
+    function addYoutubeJsIfNeed($embeded)
+    {
+        preg_match('/(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))/', $embeded, $output_array);
+        if (empty($output_array) || count($output_array) == 0) return $embeded;
+        $url = $output_array[0];
+        $idx = strpos($url, "?");
+        if (strpos($embeded, 'enablejsapi') <= 0) {
+            $urlNew = $url;
+            if ($idx == false || $idx == 0) {
+                $urlNew = $url . '?enablejsapi=1&controls=0';
+            } else {
+                $urlNew = $url . '&enablejsapi=1&controls=0';
+            }
+            $embeded = str_replace($url, $urlNew, $embeded);
+        } 
+
+        return $embeded;
     }
     function defaultOvelayData($channelName)
     {
@@ -40,10 +58,11 @@ class ChannelController extends Controller
         $overlayData->datetime = date('c');
         $overlayData->msg = '';
         $overlayData->show = 'on';
-        $overlayData->position = 'right';
+        $overlayData->position = 'left';
         $overlayData->url = '/uploads/public/ylinh.jpg';
         $overlayData->opacity = '0.75';
         $overlayData->method = 'IMG';
+        $overlayData->type = 'overlay';
         return $overlayData;
     }
     public function index()
@@ -114,10 +133,12 @@ class ChannelController extends Controller
             return json_encode(["channelName" => "Not allow empty", "embeded" => "Not allow empty"]);
         }
 
-        $existed= $this->redis->GetCache($channelName);
-        if(!empty($existed)){
+        $existed = $this->redis->GetCache($channelName);
+        if (!empty($existed)) {
             return $existed;
         }
+
+        $embeded = $this->addYoutubeJsIfNeed($embeded);
 
         $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded, 'broadcastUrl' => 'channel/broadcast?c=' . $channelName]);
         $this->redis->SetCache($channelName, $channelData);
@@ -136,7 +157,7 @@ class ChannelController extends Controller
         $url = $request["url"];
         $opacity = $request["opacity"];
         $method = $request["method"];
-        
+
         $overlayData = json_encode(array(
             "channel" => $channelName,
             "datetime" => date('c'),
@@ -146,7 +167,8 @@ class ChannelController extends Controller
             "url" => $url,
             "opacity" => $opacity,
             'show' => $show,
-            'method' => $method
+            'method' => $method,
+            'type' => 'overlay'
         ));
 
         $this->redis->SetCache($channelName . ":overlaydata", $overlayData);
