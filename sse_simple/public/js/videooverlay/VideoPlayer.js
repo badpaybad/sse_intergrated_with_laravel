@@ -12,6 +12,13 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
 
     this.setYoutubePlayer = function (player) {
         _this._youtube = player;
+        //_this.youtubeLog();
+    }
+    this.youtubeLog=function(){
+        setTimeout(function(){
+            console.log(_this._youtube.getCurrentTime());
+            _this.youtubeLog();
+        },1000);
     }
 
     this.init = function () {
@@ -50,10 +57,10 @@ VideoPlayer = function (videoId, onFullScreenCallback, youtubePlayer) {
         }
     };
     this.stop = function () {
-        if (_this._youtube) {
-            _this._youtube.playVideo();
-            _this._youtube.seekTo(0);
-            _this._youtube.pauseVideo();
+        if (_this._youtube) {       
+             _this._youtube.seekTo(0);
+            // _this._youtube.playVideo();
+            //_this._youtube.pauseVideo();
             _this._youtube.stopVideo();
         }
         if (!_this.$video) {
