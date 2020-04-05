@@ -52,7 +52,9 @@ class ChannelController extends Controller
             }
             $embeded = str_replace($url, $urlNew, $embeded);
         }
-
+        $embeded = str_replace('"', "'", $embeded);
+        $embeded = str_replace('<iframe', "<iframe id='video' ", $embeded);
+        //
         return $embeded;
     }
     function defaultOvelayData($channelName)
@@ -137,10 +139,10 @@ class ChannelController extends Controller
             return json_encode(["channelName" => "Not allow empty", "embeded" => "Not allow empty"]);
         }
 
-        $existed = $this->redis->GetCache($channelName);
-        if (!empty($existed)) {
-            return $existed;
-        }
+        // $existed = $this->redis->GetCache($channelName);
+        // if (!empty($existed)) {
+        //     return $existed;
+        // }
         $embededId="";
         $embeded = $this->addYoutubeJsIfNeed($embeded,$embededId);
 
