@@ -53,7 +53,9 @@ class ChannelController extends Controller
             $embeded = str_replace($url, $urlNew, $embeded);
         }
         $embeded = str_replace('"', "'", $embeded);
-        $embeded = str_replace('<iframe', "<iframe id='video' ", $embeded);
+        if(strpos($embeded,"id='video'")<=0){
+            $embeded = str_replace('<iframe', "<iframe id='video' ", $embeded);
+        }
         //
         return $embeded;
     }
