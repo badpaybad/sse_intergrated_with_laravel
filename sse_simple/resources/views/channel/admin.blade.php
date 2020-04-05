@@ -78,7 +78,7 @@
             <div>
                 <button onclick="_videoOverlay.hideOverlay()">Hide overlay</button>
                 <button onclick="_videoOverlay.showOverlay();">Show overlay</button>
-                                
+
                 <button onclick="_videoOverlay.fullWidth(true);_videoPlayer.fullWidth(true)">Normal width overlay</button>
                 <button onclick="_videoOverlay.fullWidth();_videoPlayer.fullWidth()">Full width overlay</button>
             </div>
@@ -91,6 +91,9 @@
             </div>
             <div>
                 <label> <input type="text" value="0.75" style="width:30px" name="opacity"> opacity</label>
+            </div>
+            <div>                
+            <label> <input type="text" value="black" style="width:100px" name="color"> color</label>
             </div>
             <div>
                 <label><input type="radio" value="top" name="position"> top</label>
@@ -158,18 +161,18 @@
                 playerVars: {
                     'autoplay': 0,
                     'controls': 0,
-                    "loop":1,
-                    'start':1,
-                    'rel':0,
-                    "playlist" :'{{$data->embededId}}'
+                    "loop": 1,
+                    'start': 1,
+                    'rel': 0,
+                    "playlist": '{{$data->embededId}}'
                 },
                 events: {
                     'onReady': function(e) {},
                     'onStateChange': function(e) {
                         console.log(e);
                         console.log(__youtubePlayer.getCurrentTime());
-                        if(e.data==5)
-                            e.data=-1;
+                        if (e.data == 5)
+                            e.data = -1;
                     }
                 }
             });
@@ -212,7 +215,7 @@
             var position = $("input:radio[name ='position']:checked").val();
             var urlOrContent = $("textarea[name ='urlOrContent']").val();
             var method = $("input:radio[name ='method']:checked").val();
-
+            var color = $("input[name ='color']").val();
             if (!show || show == 'undefined') show = false;
 
             var url = '/channel/changeoverlaycontent';
@@ -224,6 +227,7 @@
                 position: position,
                 url: urlOrContent,
                 method: method,
+                color:color
             }, function(response) {
 
             }, "json");

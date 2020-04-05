@@ -71,6 +71,7 @@ class ChannelController extends Controller
         $overlayData->opacity = '0.75';
         $overlayData->method = 'IMG';
         $overlayData->type = 'overlay';
+        $overlayData->color = 'black';
         return $overlayData;
     }
     public function index()
@@ -167,6 +168,7 @@ class ChannelController extends Controller
         $url = $request["url"];
         $opacity = $request["opacity"];
         $method = $request["method"];
+        $color = $request["color"];
 
         $overlayData = json_encode(array(
             "channel" => $channelName,
@@ -178,7 +180,8 @@ class ChannelController extends Controller
             "opacity" => $opacity,
             'show' => $show,
             'method' => $method,
-            'type' => 'overlay'
+            'type' => 'overlay',
+            'color'=>$color
         ));
 
         $this->redis->SetCache($channelName . ":overlaydata", $overlayData);

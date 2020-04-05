@@ -116,7 +116,9 @@ VideoOverlay = function (videoDomId) {
             _this._cssOverlay.width = '50%';
             _this._cssOverlay.height = '100%';
         }
-
+        if (data.color) {
+            _this._cssOverlay.backgroundColor = data.color;
+        }
         _this._cssOverlay.overflow = 'auto';
         if (data.method == 'IFRAME' || data.method == 'IMG') {
             _this._cssOverlay.overflow = 'hidden';
@@ -172,7 +174,7 @@ VideoOverlay = function (videoDomId) {
             if (transformResponse) {
                 transformed = transformResponse(data);
             }
-            if (data.position == "top" || data.position == "bottom" || data.position == "fullscreen") {
+            if (data.position == "top" || data.position == "bottom") {
                 _this.$overlay.html("<img src='" + _this._currentUrlOrContent + "' style='height:100%'/>");
             } else {
                 _this.$overlay.html("<img src='" + _this._currentUrlOrContent + "' style='width:100%'/>");
