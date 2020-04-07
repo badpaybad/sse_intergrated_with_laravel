@@ -43,17 +43,22 @@ class VideoOverlayController extends Controller
 
     function defaultOvelayData($channelName)
     {
+        $positsion = ['top', 'right', 'bottom', 'left', 'fullscreen'];
+        $opacity = ["0.5", "0.75", "1"];
+
+        $color = ["#000000", "#ff0000", "#ffff00"];
+
         $overlayData = new stdClass;
         $overlayData->channel = $channelName;
         $overlayData->datetime = date('c');
         $overlayData->msg = '';
         $overlayData->show = true;
-        $overlayData->position = 'left';
+        $overlayData->position = $positsion[rand(0, 4)];
         $overlayData->url = '/uploads/public/ylinh.jpg';
-        $overlayData->opacity = '0.75';
+        $overlayData->opacity =$opacity[rand(0, 2)];
         $overlayData->method = 'IFRAME';
         $overlayData->type = 'overlay';
-        $overlayData->color = '#000000';
+        $overlayData->color = $color[rand(0, 2)];
         return $overlayData;
     }
 }
