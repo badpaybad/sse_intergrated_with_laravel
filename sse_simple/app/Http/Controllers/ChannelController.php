@@ -31,7 +31,7 @@ class ChannelController extends Controller
         $data->channelName = $channelName;
         $embededId = "";
         $data->embeded = $this->addYoutubeJsIfNeed("<iframe id='video' width='320' height='240' src='https://www.youtube.com/embed/coZxG824aUE' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' webkitAllowFullScreen='yes' allowfullscreen='yes' mozallowfullscreen='yes' allowvr='yes'></iframe>", $embededId);
-        $data->embededId=$embededId;
+        $data->embededId = $embededId;
         $data->overlayData = $this->defaultOvelayData($channelName);
         return $data;
     }
@@ -46,14 +46,14 @@ class ChannelController extends Controller
         if (strpos($embeded, 'enablejsapi') <= 0) {
             $urlNew = $url;
             if ($idx == false || $idx == 0) {
-                $urlNew = $url . '?enablejsapi=1&controls=0&loop=1&start=1&rel=0&playlist='.$embededId;
+                $urlNew = $url . '?enablejsapi=1&controls=0&loop=1&start=1&rel=0&playlist=' . $embededId;
             } else {
-                $urlNew = $url . '&enablejsapi=1&controls=0&loop=1&start=1&rel=0&playlist='.$embededId;
+                $urlNew = $url . '&enablejsapi=1&controls=0&loop=1&start=1&rel=0&playlist=' . $embededId;
             }
             $embeded = str_replace($url, $urlNew, $embeded);
         }
         $embeded = str_replace('"', "'", $embeded);
-        if(strpos($embeded,"id='video'")<=0){
+        if (strpos($embeded, "id='video'") <= 0) {
             $embeded = str_replace('<iframe', "<iframe id='video' ", $embeded);
         }
         //
@@ -146,12 +146,14 @@ class ChannelController extends Controller
         // if (!empty($existed)) {
         //     return $existed;
         // }
-        $embededId="";
-        $embeded = $this->addYoutubeJsIfNeed($embeded,$embededId);
+        $embededId = "";
+        $embeded = $this->addYoutubeJsIfNeed($embeded, $embededId);
 
-        $channelData = json_encode(["channelName" => $channelName, "embeded" => $embeded,
-        "embededId" => $embededId,
-        'broadcastUrl' => 'channel/broadcast?c=' . $channelName]);
+        $channelData = json_encode([
+            "channelName" => $channelName, "embeded" => $embeded,
+            "embededId" => $embededId,
+            'broadcastUrl' => 'channel/broadcast?c=' . $channelName
+        ]);
         $this->redis->SetCache($channelName, $channelData);
 
         return $channelData;
@@ -181,7 +183,7 @@ class ChannelController extends Controller
             'show' => $show,
             'method' => $method,
             'type' => 'overlay',
-            'color'=>$color
+            'color' => $color
         ));
 
         $this->redis->SetCache($channelName . ":overlaydata", $overlayData);

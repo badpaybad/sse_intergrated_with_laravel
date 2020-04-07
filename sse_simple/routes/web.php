@@ -26,3 +26,6 @@ Route::post('/videooverlay', "SampleController@videooverlay")->name("videooverla
 Route::get('/fineuploader/index', "FineUploaderController@index")->name("fineuploader.index");
 Route::post('/fineuploader/upload', "FineUploaderController@upload")->name("fineuploader.upload");
 Route::delete('/fineuploader/delete', "FineUploaderController@delete")->name("fineuploader.delete");
+
+
+Route::post('/api/videooverlay/register', "VideoOverlayController@register")->name("videooverlay.register");
